@@ -30,8 +30,13 @@ services:
     build: docker/composer
     volumes:
       - ./src:/app
+    working_dir: /app
     environment:
       - COMPOSER_AUTH=${COMPOSER_AUTH}
+      - DB_HOST=${DB_HOST}
+      - DB_DATABASE=${DB_NAME}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
 
   php:
     build: docker/php-cli
