@@ -9,6 +9,9 @@ use App\Orchid\Screens\Role\RoleListScreen;
 use App\Orchid\Screens\User\UserEditScreen;
 use App\Orchid\Screens\User\UserListScreen;
 
+use App\Orchid\Screens\LeadEditScreen;
+use App\Orchid\Screens\LeadListScreen;
+
 /*
 |--------------------------------------------------------------------------
 | Dashboard Routes
@@ -35,3 +38,14 @@ $this->router->screen('roles', RoleListScreen::class)->name('platform.systems.ro
 // Example...
 $this->router->screen('example', ExampleScreen::class)->name('platform.example');
 //Route::screen('/dashboard/screen/idea', 'Idea::class','platform.screens.idea');
+
+$this->router->screen('leads/new', LeadEditScreen::class)
+    ->name('platform.lead.new');
+
+$this->router->screen('leads/{lead}', LeadEditScreen::class)
+    ->name('platform.lead.edit');
+
+$this->router->screen('leads', LeadListScreen::class)
+    ->name('platform.lead.list');
+
+
