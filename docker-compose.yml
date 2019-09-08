@@ -1,0 +1,105 @@
+version: '3.3'
+
+services:
+  nginx:
+    image: nginx:1.17-alpine
+    volumes:
+      - ./src:/usr/share/nginx/html
+      - ./docker/nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - ${HOST_NGINX_PORT}:${DEFAULT_NGINX_PORT}
+    depends_on:
+      - php-fpm
+    links:
+      - php-fpm
+
+  php-fpm:
+    build: ./docker/php-fpm
+    volumes:
+      - ./src:/usr/share/nginx/html
+    depends_on:
+      - mariadb
+    environment:
+      - COMPOSER_AUTH=${COMPOSER_AUTH}
+      - DB_HOST=${DB_HOST}
+      - DB_DATABASE=${DB_NAME}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  composer:
+    build: docker/composer
+    volumes:
+      - ./src:/app
+    environment:
+      - COMPOSER_AUTH=${COMPOSER_AUTH}
+
+  php:
+    build: docker/php-cli
+    volumes:
+      - ./src:/app
+    working_dir: /app
+    depends_on:
+      - mariadb
+    environment:
+      - COMPOSER_AUTH=${COMPOSER_AUTH}
+      - DB_HOST=${DB_HOST}
+      - DB_DATABASE=${DB_NAME}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  artisan:
+    build: docker/php-cli
+    volumes:
+      - ./src:/app
+    working_dir: /app
+    entrypoint:
+      - php
+      - artisan
+    depends_on:
+      - mariadb
+    environment:
+      - COMPOSER_AUTH=${COMPOSER_AUTH}
+      - DB_HOST=${DB_HOST}
+      - DB_DATABASE=${DB_NAME}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  serve:
+    build: docker/php-cli
+    volumes:
+      - ./src:/app
+    command: php artisan serve
+    working_dir: /app
+    ports:
+      - ${HOST_SERVE_PORT}:${DEFAULT_SERVE_PORT}
+    depends_on:
+      - mariadb
+    environment:
+      - COMPOSER_AUTH=${COMPOSER_AUTH}
+
+  tests:
+    build: ./docker/tests
+    working_dir: /app
+    environment:
+      - PHP_IDE_CONFIG=serverName=Docker
+    volumes:
+      - .:/app
+    entrypoint: ./vendor/bin/phpunit --bootstrap vendor/autoload.php
+    command: ['tests']
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:10.4
+    volumes:
+      - mariadb_volume:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+
+volumes:
+  mariadb_volume: {}
