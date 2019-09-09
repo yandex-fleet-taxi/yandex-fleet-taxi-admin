@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27b8d843a1d78f50285f2870bc4d3853",
+    "content-hash": "fe384c83dd4965709b934dee00eb1a11",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -1110,12 +1110,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:likemusic/yandex-fleet-taxi-client.git",
-                "reference": "7f06bd6a203374f3e23d9be1e76af0cd5374332d"
+                "reference": "f0f8b378b5fc75a2ba9aff6924f2f7c89fa623a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-client/zipball/7f06bd6a203374f3e23d9be1e76af0cd5374332d",
-                "reference": "7f06bd6a203374f3e23d9be1e76af0cd5374332d",
+                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-client/zipball/f0f8b378b5fc75a2ba9aff6924f2f7c89fa623a7",
+                "reference": "f0f8b378b5fc75a2ba9aff6924f2f7c89fa623a7",
                 "shasum": ""
             },
             "require": {
@@ -1125,6 +1125,7 @@
                 "ext-libxml": "*",
                 "guzzlehttp/psr7": "^1.6",
                 "http-interop/http-factory-guzzle": "^1.0",
+                "likemusic/yandex-fleet-taxi-client-contracts": "*",
                 "php": "^7.3",
                 "php-http/client-common": "^2.0",
                 "php-http/curl-client": "^2.0",
@@ -1154,7 +1155,85 @@
                 "source": "https://github.com/likemusic/yandex-fleet-taxi-client/tree/master",
                 "issues": "https://github.com/likemusic/yandex-fleet-taxi-client/issues"
             },
-            "time": "2019-09-08T20:41:36+00:00"
+            "time": "2019-09-08T22:03:54+00:00"
+        },
+        {
+            "name": "likemusic/yandex-fleet-taxi-client-contracts",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:likemusic/yandex-fleet-taxi-client-contracts.git",
+                "reference": "ec60ed8e895001cbc79d20a3d79144f6da84357c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-client-contracts/zipball/ec60ed8e895001cbc79d20a3d79144f6da84357c",
+                "reference": "ec60ed8e895001cbc79d20a3d79144f6da84357c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Likemusic\\YandexFleetTaxiClient\\Contracts\\": "src/Contracts"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Valerij Ivashchenko",
+                    "email": "likemusicdev@gmail.com"
+                }
+            ],
+            "description": "Contracts for client for https://fleet.taxi.yandex.ru/",
+            "support": {
+                "source": "https://github.com/likemusic/yandex-fleet-taxi-client-contracts/tree/master",
+                "issues": "https://github.com/likemusic/yandex-fleet-taxi-client-contracts/issues"
+            },
+            "time": "2019-09-08T21:59:48+00:00"
+        },
+        {
+            "name": "likemusic/yandex-fleet-taxi-frontend-data-contracts",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:likemusic/yandex-fleet-taxi-frontend-data-contracts.git",
+                "reference": "2a3a8577fa29f314bccfc7a4d4b0320610f1e391"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-frontend-data-contracts/zipball/2a3a8577fa29f314bccfc7a4d4b0320610f1e391",
+                "reference": "2a3a8577fa29f314bccfc7a4d4b0320610f1e391",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Likemusic\\YandexFleetTaxi\\FrontendData\\Contracts\\": "src/Contracts"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Valerij Ivashchenko",
+                    "email": "likemusicdev@gmail.com"
+                }
+            ],
+            "description": "Contracts for frontend data.",
+            "support": {
+                "source": "https://github.com/likemusic/yandex-fleet-taxi-frontend-data-contracts/tree/master",
+                "issues": "https://github.com/likemusic/yandex-fleet-taxi-frontend-data-contracts/issues"
+            },
+            "time": "2019-09-09T09:01:28+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -5909,7 +5988,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "likemusic/yandex-fleet-taxi-client": 20
+        "likemusic/yandex-fleet-taxi-client": 20,
+        "likemusic/yandex-fleet-taxi-frontend-data-contracts": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
