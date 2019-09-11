@@ -17,7 +17,6 @@ services:
     build: ./docker/php-fpm
     volumes:
       - ./src:/usr/share/nginx/html
-      - ./docker/php-fpm/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     depends_on:
       - mariadb
     environment:
@@ -26,6 +25,10 @@ services:
       - DB_DATABASE=${DB_NAME}
       - DB_USERNAME=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - XDEBUG_CONFIG=remote_enable=${XDEBUG_REMOTE_ENABLE} remote_host=${XDEBUG_REMOTE_HOST}
+      - YANDEX_FLEET_PARK_ID=${YANDEX_FLEET_PARK_ID}
+      - YANDEX_FLEET_LOGIN=${YANDEX_FLEET_LOGIN}
+      - YANDEX_FLEET_PASSWORD=${YANDEX_FLEET_PASSWORD}
 
   composer:
     build: docker/composer

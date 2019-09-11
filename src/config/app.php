@@ -80,7 +80,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'ru',
 
     /*
     |--------------------------------------------------------------------------
@@ -175,6 +175,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        App\Providers\YandexFleetClientServiceProvider::class,
+        App\Providers\ApiControllerServiceProvider::class,
+        App\Providers\CurlHttpClientServiceProvider::class,
+        App\Providers\Psr7FactoryServiceProvider::class
     ],
 
     /*

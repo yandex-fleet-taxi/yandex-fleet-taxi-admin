@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe384c83dd4965709b934dee00eb1a11",
+    "content-hash": "40f5ece4689b2581eeb89b4cd21241d7",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -1110,12 +1110,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:likemusic/yandex-fleet-taxi-client.git",
-                "reference": "f0f8b378b5fc75a2ba9aff6924f2f7c89fa623a7"
+                "reference": "92151076eba84b23d87f9b5aa40808811b459213"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-client/zipball/f0f8b378b5fc75a2ba9aff6924f2f7c89fa623a7",
-                "reference": "f0f8b378b5fc75a2ba9aff6924f2f7c89fa623a7",
+                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-client/zipball/92151076eba84b23d87f9b5aa40808811b459213",
+                "reference": "92151076eba84b23d87f9b5aa40808811b459213",
                 "shasum": ""
             },
             "require": {
@@ -1155,7 +1155,7 @@
                 "source": "https://github.com/likemusic/yandex-fleet-taxi-client/tree/master",
                 "issues": "https://github.com/likemusic/yandex-fleet-taxi-client/issues"
             },
-            "time": "2019-09-08T22:03:54+00:00"
+            "time": "2019-09-11T00:04:30+00:00"
         },
         {
             "name": "likemusic/yandex-fleet-taxi-client-contracts",
@@ -1202,12 +1202,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:likemusic/yandex-fleet-taxi-frontend-data-contracts.git",
-                "reference": "2a3a8577fa29f314bccfc7a4d4b0320610f1e391"
+                "reference": "d39aa4b4736c0364e3fff15e70a46b7ebe15770d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-frontend-data-contracts/zipball/2a3a8577fa29f314bccfc7a4d4b0320610f1e391",
-                "reference": "2a3a8577fa29f314bccfc7a4d4b0320610f1e391",
+                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-frontend-data-contracts/zipball/d39aa4b4736c0364e3fff15e70a46b7ebe15770d",
+                "reference": "d39aa4b4736c0364e3fff15e70a46b7ebe15770d",
                 "shasum": ""
             },
             "require": {
@@ -1233,7 +1233,52 @@
                 "source": "https://github.com/likemusic/yandex-fleet-taxi-frontend-data-contracts/tree/master",
                 "issues": "https://github.com/likemusic/yandex-fleet-taxi-frontend-data-contracts/issues"
             },
-            "time": "2019-09-09T09:01:28+00:00"
+            "time": "2019-09-10T20:07:37+00:00"
+        },
+        {
+            "name": "likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters.git",
+                "reference": "8de5cb9d848397186f5c6484741cf8b69e4f504a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters/zipball/8de5cb9d848397186f5c6484741cf8b69e4f504a",
+                "reference": "8de5cb9d848397186f5c6484741cf8b69e4f504a",
+                "shasum": ""
+            },
+            "require": {
+                "likemusic/yandex-fleet-taxi-client-contracts": "*",
+                "likemusic/yandex-fleet-taxi-frontend-data-contracts": "*",
+                "php": "^7.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Likemusic\\YandexFleetTaxi\\FrontendData\\ToYandexClientPostDataConverters\\": "src/",
+                    "Likemusic\\YandexFleetTaxi\\FrontendData\\ToYandexClientPostDataConverters\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Valerij Ivashchenko",
+                    "email": "likemusicdev@gmail.com"
+                }
+            ],
+            "description": "Convert frontend data to data for client for https://fleet.taxi.yandex.ru/",
+            "support": {
+                "source": "https://github.com/likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters/tree/master",
+                "issues": "https://github.com/likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters/issues"
+            },
+            "time": "2019-09-10T23:36:46+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -4103,16 +4148,16 @@
         },
         {
             "name": "vlucas/phpdotenv",
-            "version": "v3.5.0",
+            "version": "v3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "95cb0fa6c025f7f0db7fc60f81e9fb231eb2d222"
+                "reference": "1bdf24f065975594f6a117f0f1f6cabf1333b156"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/95cb0fa6c025f7f0db7fc60f81e9fb231eb2d222",
-                "reference": "95cb0fa6c025f7f0db7fc60f81e9fb231eb2d222",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/1bdf24f065975594f6a117f0f1f6cabf1333b156",
+                "reference": "1bdf24f065975594f6a117f0f1f6cabf1333b156",
                 "shasum": ""
             },
             "require": {
@@ -4121,12 +4166,12 @@
                 "symfony/polyfill-ctype": "^1.9"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.0 || ^6.0"
+                "phpunit/phpunit": "^4.8.35 || ^5.0 || ^6.0 || ^7.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.5-dev"
+                    "dev-master": "3.6-dev"
                 }
             },
             "autoload": {
@@ -4156,7 +4201,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2019-08-27T17:00:38+00:00"
+            "time": "2019-09-10T21:37:39+00:00"
         },
         {
             "name": "watson/active",
@@ -5989,7 +6034,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "likemusic/yandex-fleet-taxi-client": 20,
-        "likemusic/yandex-fleet-taxi-frontend-data-contracts": 20
+        "likemusic/yandex-fleet-taxi-frontend-data-contracts": 20,
+        "likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

@@ -13,8 +13,11 @@
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
         "orchid/platform": "^5",
+        "php-http/curl-client": "*",
+        "php-http/discovery": "*",
         "likemusic/yandex-fleet-taxi-client": "dev-master",
-        "likemusic/yandex-fleet-taxi-frontend-data-contracts": "dev-master"
+        "likemusic/yandex-fleet-taxi-frontend-data-contracts": "dev-master",
+        "likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters": "dev-master"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
@@ -69,6 +72,10 @@
         }
     ],
     "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters.git"
+        },
         {
             "type": "vcs",
             "url": "git@github.com:likemusic/yandex-fleet-taxi-client-contracts.git"
