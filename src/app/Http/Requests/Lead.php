@@ -26,18 +26,29 @@ class Lead extends FormRequest
      */
     public function rules()
     {
+        $required = 'required';
+
         return [
             // Driver
-            DriverInterface::FIRST_NAME => 'required',
-            DriverInterface::LAST_NAME => 'required',
-            DriverInterface::WORK_PHONE => 'required',
+            DriverInterface::FIRST_NAME => $required,
+            DriverInterface::LAST_NAME => $required,
+            DriverInterface::WORK_PHONE => $required,
 
             // Driver License
-            DriverLicenseInterface::ISSUE_COUNTRY => 'required',
-            DriverLicenseInterface::EXPIRATION_DATE => 'required',
-            DriverLicenseInterface::ISSUE_DATE => 'required',
-            DriverLicenseInterface::SERIES => 'required',
-            DriverLicenseInterface::NUMBER => 'required',
+            DriverLicenseInterface::ISSUE_COUNTRY => $required,
+            DriverLicenseInterface::EXPIRATION_DATE => $required,
+            DriverLicenseInterface::ISSUE_DATE => $required,
+            DriverLicenseInterface::SERIES => $required,
+            DriverLicenseInterface::NUMBER => $required,
+
+            // Car
+            CarInterface::BRAND => $required,
+            CarInterface::COLOR => $required,
+            CarInterface::MODEL => $required,
+            CarInterface::NUMBER => $required,
+            CarInterface::REGISTRATION => $required,
+            CarInterface::VIN => $required,
+            CarInterface::ISSUE_YEAR => $required,
         ];
     }
 
