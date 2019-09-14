@@ -8,7 +8,7 @@ return [
     'default_post_data_values' => [
         'driver' => [
             'accounts' => [
-                'balance_limit' => 5,
+                'balance_limit' => "5",
             ],
 
             'driver_profile' => [

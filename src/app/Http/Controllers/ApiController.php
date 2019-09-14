@@ -98,13 +98,12 @@ class ApiController extends Controller
 
             $defaultDriverPostData = $this->defaultDriverPostData;
             $driverId = $this->createDriverByFrontendData($parkId, $data, $defaultDriverPostData);
-
             $defaultCarPostData = $this->defaultCarPostData;
+
             $carId = $this->createCarByFrontendData($data, $defaultCarPostData);
             $this->bindCarToDriver($parkId, $driverId, $carId);
 
             $status = 'success';
-            $ret = ['status' => 'success'];
         } catch (HttpJsonResponseException $exception) {
             $this->logHttpJsonResponseException($exception);
             $errors = $this->getErrorsByHttpJsonResponseException($exception);
@@ -134,7 +133,9 @@ class ApiController extends Controller
     {
         $yandexClientPostData = $this->convertFrontendDataToYandexClientCreateCarPostData($frontendData, $defaultCarPostData);
 
-        return $this->createCar($yandexClientPostData);
+        $createCarResponseData = $this->createCar($yandexClientPostData);
+
+        return $createCarResponseData['data']['id'];
     }
 
     private function createCar($postData)

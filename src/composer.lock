@@ -1110,12 +1110,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:likemusic/yandex-fleet-taxi-client.git",
-                "reference": "df904e28bf5ae4598c355d7ba23c5a127f7c86b0"
+                "reference": "9d21187ba9b9ed363f1d9ce25d7ee83295d6e60f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-client/zipball/df904e28bf5ae4598c355d7ba23c5a127f7c86b0",
-                "reference": "df904e28bf5ae4598c355d7ba23c5a127f7c86b0",
+                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-client/zipball/9d21187ba9b9ed363f1d9ce25d7ee83295d6e60f",
+                "reference": "9d21187ba9b9ed363f1d9ce25d7ee83295d6e60f",
                 "shasum": ""
             },
             "require": {
@@ -1155,7 +1155,7 @@
                 "source": "https://github.com/likemusic/yandex-fleet-taxi-client/tree/master",
                 "issues": "https://github.com/likemusic/yandex-fleet-taxi-client/issues"
             },
-            "time": "2019-09-11T20:55:02+00:00"
+            "time": "2019-09-14T18:39:33+00:00"
         },
         {
             "name": "likemusic/yandex-fleet-taxi-client-contracts",
@@ -1241,12 +1241,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters.git",
-                "reference": "9a1a76b0dc445f7c040bae2f3a72e5cba5f63f8a"
+                "reference": "2ce94561be61abdf723fdbbe179108c7fddd6a30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters/zipball/9a1a76b0dc445f7c040bae2f3a72e5cba5f63f8a",
-                "reference": "9a1a76b0dc445f7c040bae2f3a72e5cba5f63f8a",
+                "url": "https://api.github.com/repos/likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters/zipball/2ce94561be61abdf723fdbbe179108c7fddd6a30",
+                "reference": "2ce94561be61abdf723fdbbe179108c7fddd6a30",
                 "shasum": ""
             },
             "require": {
@@ -1278,7 +1278,7 @@
                 "source": "https://github.com/likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters/tree/master",
                 "issues": "https://github.com/likemusic/yandex-fleet-taxi-frontend-data-to-yandex-client-post-data-converters/issues"
             },
-            "time": "2019-09-13T22:00:44+00:00"
+            "time": "2019-09-14T19:16:58+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -5289,16 +5289,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.15",
+            "version": "7.5.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d79c053d972856b8b941bb233e39dc521a5093f0"
+                "reference": "316afa6888d2562e04aeb67ea7f2017a0eb41661"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d79c053d972856b8b941bb233e39dc521a5093f0",
-                "reference": "d79c053d972856b8b941bb233e39dc521a5093f0",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/316afa6888d2562e04aeb67ea7f2017a0eb41661",
+                "reference": "316afa6888d2562e04aeb67ea7f2017a0eb41661",
                 "shasum": ""
             },
             "require": {
@@ -5369,7 +5369,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-08-21T07:05:16+00:00"
+            "time": "2019-09-14T09:08:39+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -5591,16 +5591,16 @@
         },
         {
             "name": "sebastian/exporter",
-            "version": "3.1.1",
+            "version": "3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
-                "reference": "06a9a5947f47b3029d76118eb5c22802e5869687"
+                "reference": "68609e1261d215ea5b21b7987539cbfbe156ec3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/06a9a5947f47b3029d76118eb5c22802e5869687",
-                "reference": "06a9a5947f47b3029d76118eb5c22802e5869687",
+                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/68609e1261d215ea5b21b7987539cbfbe156ec3e",
+                "reference": "68609e1261d215ea5b21b7987539cbfbe156ec3e",
                 "shasum": ""
             },
             "require": {
@@ -5654,7 +5654,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2019-08-11T12:43:14+00:00"
+            "time": "2019-09-14T09:02:43+00:00"
         },
         {
             "name": "sebastian/global-state",
