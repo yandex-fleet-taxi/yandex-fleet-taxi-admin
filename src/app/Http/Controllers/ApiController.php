@@ -17,6 +17,7 @@ use Likemusic\YandexFleetTaxiClient\Exception as YandexClientException;
 use Likemusic\YandexFleetTaxiClient\HttpJsonResponseException;
 use Likemusic\YandexFleetTaxiClient\HttpResponseException;
 use Psr\Http\Message\RequestInterface;
+use Psr\Log\LoggerInterface;
 
 class ApiController extends Controller
 {
@@ -51,6 +52,11 @@ class ApiController extends Controller
     private $yandexPassword;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var array
      */
     private $defaultDriverPostData;
@@ -67,6 +73,7 @@ class ApiController extends Controller
         YandexClientInterface $yandexClient,
         ToCreateDriverPostDataConverter $toCreateDriverPostDataConverter,
         ToCreateCarPostDataConverter $toCreateCarPostDataConverter,
+        LoggerInterface $logger,
         array $defaultDriverPostData = [],
         array $defaultCarPostData = []
     ) {
@@ -76,6 +83,7 @@ class ApiController extends Controller
         $this->yandexClient = $yandexClient;
         $this->toCreateDriverPostDataConverter = $toCreateDriverPostDataConverter;
         $this->toCreateCarPostDataConverter = $toCreateCarPostDataConverter;
+        $this->logger = $logger;
         $this->defaultDriverPostData = $defaultDriverPostData;
         $this->defaultCarPostData = $defaultCarPostData ;
     }
@@ -157,7 +165,9 @@ class ApiController extends Controller
 
     private function getErrorsByHttpResponseException(HttpResponseException $exception)
     {
-        return [];//todo
+        return [
+            'common' => ['http_response_error'],
+        ];//todo
     }
 
     private function getErrorsByHttpJsonResponseException(HttpJsonResponseException $exception)
@@ -170,7 +180,8 @@ class ApiController extends Controller
 
         switch ($jsonCode) {
             case 'duplicate_driver_license':
-                $message = 'Водитель с указанным ВУ уже зарегистрирован.';
+//                $message = 'Водитель с указанным ВУ уже зарегистрирован.';
+                $message = 'duplicate_driver_license';
                 $errors = [
                     DriverLicenseInterface::SERIES => [$message],
                     DriverLicenseInterface::NUMBER => [$message],
@@ -178,7 +189,8 @@ class ApiController extends Controller
                 break;
 
             case 'duplicate_phone':
-                $message = 'Водитель с указанным номером рабочего телефона уже зарегистрирован.';
+//                $message = 'Водитель с указанным номером рабочего телефона уже зарегистрирован.';
+                $message = 'duplicate_phone';
                 $errors = [
                     DriverInterface::WORK_PHONE => [$message],
                 ];
@@ -187,7 +199,8 @@ class ApiController extends Controller
             default:
                 $errors = [
                     'common' => [
-                        'Во время обработки запроса произошла ошибка. Попробуйте повторить отправку формы немного позже.'
+//                        'Во время обработки запроса произошла ошибка. Попробуйте повторить отправку формы немного позже.'
+                        'unknown'
                     ]
                 ];
         }
@@ -213,17 +226,17 @@ class ApiController extends Controller
 
     private function logHttpResponseException(HttpResponseException $exception)
     {
-        //todo
+        $this->logger->error($exception->getMessage(), ['exception' => $exception]);//todo
     }
 
     private function logHttpJsonResponseException(HttpJsonResponseException $exception)
     {
-        //todo
+        $this->logger->error($exception->getMessage(), ['exception' => $exception]);//todo
     }
 
     private function logException(Exception $exception, LeadFormRequest $request)
     {
-        //todo
+        $this->logger->error($exception->getMessage(), ['exception' => $exception]);//todo
     }
 
     private function yandexFleetClientVisitHomepage()

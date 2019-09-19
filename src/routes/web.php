@@ -15,4 +15,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/add', 'ApiController@addLead');
+Route::post('/add', 'ApiController@addLead')->middleware('cors');

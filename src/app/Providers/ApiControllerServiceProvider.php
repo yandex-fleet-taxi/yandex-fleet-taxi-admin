@@ -3,10 +3,25 @@
 namespace App\Providers;
 
 use App\Http\Controllers\ApiController;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Config\Repository as ConfigInterface;
+
 
 class ApiControllerServiceProvider extends ServiceProvider
 {
+    /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    public function __construct(Application $app)
+    {
+        $this->config = $app->get(ConfigInterface::class);
+
+        parent::__construct($app);
+    }
+
     /**
      * Register services.
      *
@@ -14,12 +29,14 @@ class ApiControllerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $yandexLogin = config('yandex-fleet.login');
-        $yandexPassword = config('yandex-fleet.password');
-        $parkId = config('yandex-fleet.park_id');
+        $config = $this->config;
 
-        $driverDefaultPostDataValues = config('yandex-fleet.default_post_data_values.driver');
-        $carDefaultPostDataValues = config('yandex-fleet.default_post_data_values.car');
+        $yandexLogin = $config->get('yandex-fleet.login');
+        $yandexPassword = $config->get('yandex-fleet.password');
+        $parkId = $config->get('yandex-fleet.park_id');
+
+        $driverDefaultPostDataValues = $config->get('yandex-fleet.default_post_data_values.driver');
+        $carDefaultPostDataValues = $config->get('yandex-fleet.default_post_data_values.car');
 
         $apiControllerBuilder = $this->app->when(ApiController::class);
 

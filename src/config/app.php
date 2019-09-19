@@ -178,7 +178,8 @@ return [
         App\Providers\YandexFleetClientServiceProvider::class,
         App\Providers\ApiControllerServiceProvider::class,
         App\Providers\CurlHttpClientServiceProvider::class,
-        App\Providers\Psr7FactoryServiceProvider::class
+        App\Providers\Psr7FactoryServiceProvider::class,
+        App\Providers\CorsMiddlewareProvider::class,
     ],
 
     /*

@@ -5,6 +5,8 @@ return [
     'password' => env('YANDEX_FLEET_PASSWORD'),
     'park_id' => env('YANDEX_FLEET_PARK_ID'),
 
+    'cors_host' => 'http://project1589609.tilda.ws',
+
     'default_post_data_values' => [
         'driver' => [
             'accounts' => [
