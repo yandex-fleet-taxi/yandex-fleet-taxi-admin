@@ -20,6 +20,7 @@ services:
     depends_on:
       - mariadb
     environment:
+      - PHP_IDE_CONFIG=serverName=Docker
       - COMPOSER_AUTH=${COMPOSER_AUTH}
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}
@@ -36,11 +37,16 @@ services:
       - ./src:/app
     working_dir: /app
     environment:
+      - PHP_IDE_CONFIG=serverName=Docker
       - COMPOSER_AUTH=${COMPOSER_AUTH}
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}
       - DB_USERNAME=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - XDEBUG_CONFIG=remote_enable=${XDEBUG_REMOTE_ENABLE} remote_host=${XDEBUG_REMOTE_HOST}
+      - YANDEX_FLEET_PARK_ID=${YANDEX_FLEET_PARK_ID}
+      - YANDEX_FLEET_LOGIN=${YANDEX_FLEET_LOGIN}
+      - YANDEX_FLEET_PASSWORD=${YANDEX_FLEET_PASSWORD}
 
   php:
     build: docker/php-cli
@@ -50,11 +56,16 @@ services:
     depends_on:
       - mariadb
     environment:
+      - PHP_IDE_CONFIG=serverName=Docker
       - COMPOSER_AUTH=${COMPOSER_AUTH}
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}
       - DB_USERNAME=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - XDEBUG_CONFIG=remote_enable=${XDEBUG_REMOTE_ENABLE} remote_host=${XDEBUG_REMOTE_HOST}
+      - YANDEX_FLEET_PARK_ID=${YANDEX_FLEET_PARK_ID}
+      - YANDEX_FLEET_LOGIN=${YANDEX_FLEET_LOGIN}
+      - YANDEX_FLEET_PASSWORD=${YANDEX_FLEET_PASSWORD}
 
   artisan:
     build: docker/php-cli
@@ -67,11 +78,16 @@ services:
     depends_on:
       - mariadb
     environment:
+      - PHP_IDE_CONFIG=serverName=Docker
       - COMPOSER_AUTH=${COMPOSER_AUTH}
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}
       - DB_USERNAME=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - XDEBUG_CONFIG=remote_enable=${XDEBUG_REMOTE_ENABLE} remote_host=${XDEBUG_REMOTE_HOST}
+      - YANDEX_FLEET_PARK_ID=${YANDEX_FLEET_PARK_ID}
+      - YANDEX_FLEET_LOGIN=${YANDEX_FLEET_LOGIN}
+      - YANDEX_FLEET_PASSWORD=${YANDEX_FLEET_PASSWORD}
 
   serve:
     build: docker/php-cli
@@ -84,13 +100,32 @@ services:
     depends_on:
       - mariadb
     environment:
+      - PHP_IDE_CONFIG=serverName=Docker
       - COMPOSER_AUTH=${COMPOSER_AUTH}
+      - DB_HOST=${DB_HOST}
+      - DB_DATABASE=${DB_NAME}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - XDEBUG_CONFIG=remote_enable=${XDEBUG_REMOTE_ENABLE} remote_host=${XDEBUG_REMOTE_HOST}
+      - YANDEX_FLEET_PARK_ID=${YANDEX_FLEET_PARK_ID}
+      - YANDEX_FLEET_LOGIN=${YANDEX_FLEET_LOGIN}
+      - YANDEX_FLEET_PASSWORD=${YANDEX_FLEET_PASSWORD}
 
   tests:
     build: ./docker/tests
     working_dir: /app
     environment:
       - PHP_IDE_CONFIG=serverName=Docker
+      - COMPOSER_AUTH=${COMPOSER_AUTH}
+      - DB_HOST=${DB_HOST}
+      - DB_DATABASE=${DB_NAME}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - XDEBUG_CONFIG=remote_enable=${XDEBUG_REMOTE_ENABLE} remote_host=${XDEBUG_REMOTE_HOST}
+      - YANDEX_FLEET_PARK_ID=${YANDEX_FLEET_PARK_ID}
+      - YANDEX_FLEET_LOGIN=${YANDEX_FLEET_LOGIN}
+      - YANDEX_FLEET_PASSWORD=${YANDEX_FLEET_PASSWORD}
+
     volumes:
       - .:/app
     entrypoint: ./vendor/bin/phpunit --bootstrap vendor/autoload.php
