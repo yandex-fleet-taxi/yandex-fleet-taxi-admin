@@ -1,6 +1,11 @@
 // $formurl = 'https://forms.tildacdn.com/procces/';
-$formurl = 'http://sf.likemusic.loc/add?XDEBUG_SESSION_START=PHP_STORM';
-formSelector = '#form127249742';
+var $formurl = 'http://sf.likemusic.loc/add?XDEBUG_SESSION_START=PHP_STORM';
+var formSelector = '#form127249742';
+var carBrandSelectSelector = 'select[name=car_brand]';
+var carBrandsJsonUrl = 'http://sf.likemusic.loc/js/data/car/brands.json';
+var carModelsSelectSelector = 'select[name=car_model]';
+var carModelsJsonUrlPattern = 'http://sf.likemusic.loc/js/data/car/models/';
+
 
 function addNewErrorMessages() {
     // RU
@@ -470,9 +475,64 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
 function onClickSubmit(event) {
 }
 
+function generateCarBrandsSelect()
+{
+    $.getJSON(carBrandsJsonUrl, function (brands) {
+        var $select = $(carBrandSelectSelector);
+        $select.empty();
+        var option = $('<option>').val('').text('Выберите марку ...');
+        $select.append(option);
+
+        $.each(brands, function (key, brand) {
+            option = $('<option>').attr('value', brand).text(brand);
+            $select.append(option);
+        });
+    });
+}
+
+function generateCarModelsSelect()
+{
+    var $modelsSelect = $(carModelsSelectSelector);
+    $modelsSelect.empty();
+    var option = $('<option>').prop('selected', true).text('Сперва выберите марку автомобиля в поле выше.');
+    $modelsSelect.append(option);
+    $modelsSelect.prop('disabled', 'disabled');
+
+    $(carBrandSelectSelector).change(function () {
+        var brand = $(this).val();
+        $modelsSelect.empty();
+
+        if (!brand) {
+            option = $('<option>').prop('selected', true).text('Сперва выберите марку автомобиля в поле выше.');
+            $modelsSelect.append(option);
+            $modelsSelect.prop('disabled', 'disabled');
+
+            return;
+        }
+
+        $modelsSelect.prop('disabled', 'disabled');
+        var firstOption = $('<option>').val('').text('Загрузка моделей ...');
+        $modelsSelect.append(firstOption);
+
+        var carModelsJsonUrl = carModelsJsonUrlPattern + brand + '.json';
+        $.getJSON(carModelsJsonUrl, function (models) {
+            $.each(models, function (key, model) {
+                option = $('<option>').attr('value', model).text(model);
+                $modelsSelect.append(option);
+            });
+
+            firstOption.text('Выберите модель ...');
+            $modelsSelect.prop('disabled', false);
+        });
+    });
+}
 
 jQuery(function () {
     addNewErrorMessages();
+
+    generateCarBrandsSelect();
+    generateCarModelsSelect();
+
     var $form = jQuery(formSelector);
     var form = $form.get(0);
     var $r = $form.closest('.r');
