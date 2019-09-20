@@ -5,12 +5,11 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 use Likemusic\YandexFleetTaxiClient\Contracts\LanguageInterface;
+use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarBrandsAndModels\CarBrandsGenerator;
+use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarBrandsAndModels\CarBrandModelsGenerator;
 
 class UpdateCarBrandsAndModels extends Command
 {
-    const FILE_PUBLIC_RELATIVE_NAME = 'js/data/car/brands.json';
-    const DIR_PUBLIC_RELATIVE_NAME = 'js/data/car/models/';
-
     /**
      * The name and signature of the console command.
      *
@@ -24,6 +23,16 @@ class UpdateCarBrandsAndModels extends Command
      * @var string
      */
     protected $description = 'Regenerate cars brands and models data by Yandex-provided data.';
+
+    /**
+     * @var CarBrandsGenerator
+     */
+    private $carBrandsGenerator;
+
+    /**
+     * @var CarBrandModelsGenerator
+     */
+    private $carBrandModelsGenerator;
 
     /**
      * @var YandexClientInterface
@@ -48,13 +57,23 @@ class UpdateCarBrandsAndModels extends Command
     /**
      * Create a new command instance.
      *
+     * @param CarBrandsGenerator $carBrandsGenerator
+     * @param CarBrandModelsGenerator $carBrandModelsGenerator
      * @param YandexClientInterface $yandexClient
      * @param string $yandexLogin
      * @param string $yandexPassword
      * @param string $parkId
      */
-    public function __construct(YandexClientInterface $yandexClient, string $yandexLogin, string $yandexPassword, string $parkId)
-    {
+    public function __construct(
+        CarBrandsGenerator $carBrandsGenerator,
+        CarBrandModelsGenerator $carBrandModelsGenerator,
+        YandexClientInterface $yandexClient,
+        string $yandexLogin,
+        string $yandexPassword,
+        string $parkId
+    ) {
+        $this->carBrandsGenerator = $carBrandsGenerator;
+        $this->carBrandModelsGenerator = $carBrandModelsGenerator;
         $this->yandexClient = $yandexClient;
         $this->yandexLogin = $yandexLogin;
         $this->yandexPassword = $yandexPassword;
@@ -75,43 +94,17 @@ class UpdateCarBrandsAndModels extends Command
 
         $this->initYandexClient($yandexClient, $this->yandexLogin, $this->yandexPassword);
         $brands = $this->generateBrands($yandexClient, $parkId);
-//        $this->generateModelsForBrands($yandexClient, $brands);
+        $this->generateModelsForBrands($yandexClient, $brands);
+    }
+
+    private function generateModelsForBrands($yandexClient, $brands)
+    {
+        $this->carBrandModelsGenerator->generateBrandsModels($yandexClient, $brands);
     }
 
     private function generateBrands(YandexClientInterface $yandexClient, string $parkId)
     {
-        $vehiclesCardData = $yandexClient->getVehiclesCardData($parkId);
-        $brands = $this->getBrandsByVehiclesCardData($vehiclesCardData);
-        $this->saveBrands($brands);
-
-        return $brands;
-    }
-
-    private function saveBrands(array $brands)
-    {
-        $brandsFullFilename = $this->getBrandsFullFilename();
-        $json = json_encode($brands);
-
-        file_put_contents($brandsFullFilename, $json);
-    }
-
-    private function getBrandsFullFilename()
-    {
-        $publicPath = public_path();
-
-        return $publicPath . DIRECTORY_SEPARATOR . self::FILE_PUBLIC_RELATIVE_NAME;
-    }
-
-    private function getBrandsByVehiclesCardData(array $vehiclesCardData)
-    {
-        $sourceCarBrands = $vehiclesCardData['data']['references']['car_brands'];
-
-        return array_map([$this, 'getBrandName'], $sourceCarBrands);
-    }
-
-    private function getBrandName(array $brand)
-    {
-        return $brand['name'];
+        return $this->carBrandsGenerator->generateBrands($yandexClient, $parkId);
     }
 
     private function initYandexClient(YandexClientInterface $yandexClient, $login, $password)
