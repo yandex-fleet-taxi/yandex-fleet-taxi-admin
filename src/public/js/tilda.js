@@ -5,12 +5,13 @@ var carBrandSelectSelector = 'select[name=car_brand]';
 var carBrandsJsonUrl = 'http://sf.likemusic.loc/js/data/car/brands.json';
 var carModelsSelectSelector = 'select[name=car_model]';
 var carModelsJsonUrlPattern = 'http://sf.likemusic.loc/js/data/car/models/';
-
+var errorCodeNumber = 0;
 
 function addNewErrorMessages() {
     // RU
     var ruMessages = {
         'duplicate_driver_license': 'Водитель с указанным ВУ уже зарегистрирован.',
+        'invalid_driver_license': 'Неверные данные ВУ.',
         'duplicate_phone': 'Водитель с указанным номером рабочего телефона уже зарегистрирован.',
         'unknown': 'Во время обработки запроса произошла неизветная ошибка. Попробуте повторить отправку формы немного позже.',
         'http_response_error': 'Во время обработки данных сервером Яндекса произошла ошибка. Попробуте повторить отправку формы немного позже.',
@@ -21,6 +22,7 @@ function addNewErrorMessages() {
     // EN
     var enMessages = {
         'duplicate_driver_license': 'Driver with that license already exists.',
+        'invalid_driver_license': 'Invalid driver license.',
         'duplicate_phone': 'Driver with that working phone number already exists.',
         'unknown': 'There is an error occurred while processing form data. Please try again later.',
         'http_response_error': 'There is an error occurred on Yandex server, while processing form data. Please try again later.',
@@ -69,6 +71,30 @@ var submitHandler = function (event) {
 
 
 window.tildaFormNew = {};
+window.tildaFormNew.showErrors = function($jform, errors){
+    var validateErrors = window.tildaForm.arValidateErrors;
+    var knownErrorCodesRu = validateErrors.RU;
+    var knownErrorCodesEn = validateErrors.EN;
+
+    $.each(errors, function (index, error) {
+        var errorCodes = error.type;
+
+        $.each(errorCodes, function (errorCodeIndex, errorCode) {
+            if (errorCode in knownErrorCodesRu) {
+                return;
+            }
+
+            errorCodeNumber++;
+            var customErrorCode = 'error_' + errorCodeNumber;
+            errorCodes[errorCodeIndex] = customErrorCode;
+            knownErrorCodesRu[customErrorCode] = errorCode;
+            knownErrorCodesEn[customErrorCode] = errorCode;
+        })
+    });
+
+    window.tildaForm.showErrors($jform, errors);
+};
+
 window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) {
     window.tildaForm.tildapayment = !1;
     if ($jform.data('formcart') == 'y') {
@@ -294,7 +320,7 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
 
                             for (var commonErrorCodeIndex in commonErrorCodes) {
                                 var commonErrorCode = commonErrorCodes[commonErrorCodeIndex];
-                                var commonErrorMessage = arLang[commonErrorCode];
+                                var commonErrorMessage = arLang[commonErrorCode] ? arLang[commonErrorCode] : commonErrorCodeIndex;
                                 commonErrorMessages.push(commonErrorMessage);
                             }
 
@@ -323,7 +349,7 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
                         }
 
                         if (errors.length > 0) {
-                            window.tildaForm.showErrors($jform, errors);
+                            window.tildaFormNew.showErrors($jform, errors);
                         }
                     } else {
                         $allError.html(error.responseText + '. Please, try again later.')
