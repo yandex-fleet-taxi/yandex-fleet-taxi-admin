@@ -1,10 +1,16 @@
 // $formurl = 'https://forms.tildacdn.com/procces/';
 var $formurl = 'http://sf.likemusic.loc/add?XDEBUG_SESSION_START=PHP_STORM';
 var formSelector = '#form127249742';
+
 var carBrandSelectSelector = 'select[name=car_brand]';
 var carBrandsJsonUrl = 'http://sf.likemusic.loc/js/data/car/brands.json';
+
 var carModelsSelectSelector = 'select[name=car_model]';
 var carModelsJsonUrlPattern = 'http://sf.likemusic.loc/js/data/car/models/';
+
+var driverLicenseIssueCountrySelector = 'select[name=licence_issue_country]';
+var driverLicenseIssueCountryJsonUrl = 'http://sf.likemusic.loc/js/data/driver/license/countries.json';
+
 var errorCodeNumber = 0;
 
 function addNewErrorMessages() {
@@ -43,32 +49,6 @@ function isJSON(str) {
         return false;
     }
 }
-
-$.fn.bindFirst = function (name, selector, fn) {
-    // bind as you normally would
-    // don't want to miss out on any jQuery magic
-    this.on(name, selector, fn);
-
-    // Thanks to a comment by @Martin, adding support for
-    // namespaced events too.
-    this.each(function () {
-        var handlers = $._data(this, 'events')[name.split('.')[0]];
-        // take out the handler we just inserted from the end
-        var handler = handlers.pop();
-        // move it at the beginning
-        handlers.splice(0, 0, handler);
-    });
-};
-
-var clickHandler = function (event) {
-    // alert('Click Handler! ');
-    onClickSubmit(event);
-};
-
-var submitHandler = function (event) {
-    // alert('Submit Handler! ');
-};
-
 
 window.tildaFormNew = {};
 window.tildaFormNew.showErrors = function($jform, errors){
@@ -495,29 +475,37 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
             }
         }
     }
+};
+
+
+function generateCarBrandsSelect() {
+    generateSelect(carBrandSelectSelector, carBrandsJsonUrl,'Выберите марку ...');
 }
-;
 
-function onClickSubmit(event) {
-}
+function generateSelect(selectSelector, jsonUrl, firstEmptyTitle) {
+    var $select = $(selectSelector);
 
-function generateCarBrandsSelect()
-{
-    $.getJSON(carBrandsJsonUrl, function (brands) {
-        var $select = $(carBrandSelectSelector);
-        $select.empty();
-        var option = $('<option>').val('').text('Выберите марку ...');
-        $select.append(option);
+    $select.prop('disabled', true);
+    $select.empty();
+    var $firstOption = $('<option>').val('').text('Загружается ...');
+    $select.append($firstOption);
 
-        $.each(brands, function (key, brand) {
-            option = $('<option>').attr('value', brand).text(brand);
+    $.getJSON(jsonUrl, function (items) {
+        $.each(items, function (key, item) {
+            var option = $('<option>').attr('value', item).text(item);
             $select.append(option);
         });
+
+        $firstOption.text(firstEmptyTitle);
+        $select.prop('disabled', false);
     });
 }
 
-function generateCarModelsSelect()
-{
+function generateDriverLicenseIssueCountrySelect() {
+    generateSelect(driverLicenseIssueCountrySelector, driverLicenseIssueCountryJsonUrl, 'Выберите страну ...');
+}
+
+function generateCarModelsSelect() {
     var $modelsSelect = $(carModelsSelectSelector);
     $modelsSelect.empty();
     var option = $('<option>').prop('selected', true).text('Сперва выберите марку автомобиля в поле выше.');
@@ -555,7 +543,7 @@ function generateCarModelsSelect()
 
 jQuery(function () {
     addNewErrorMessages();
-
+    generateDriverLicenseIssueCountrySelect();
     generateCarBrandsSelect();
     generateCarModelsSelect();
 

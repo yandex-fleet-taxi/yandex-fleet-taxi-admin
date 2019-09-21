@@ -64,7 +64,6 @@ class Lead extends FormRequest
             DriverLicenseInterface::ISSUE_COUNTRY => $this->getDriverLicenseIssueCountryValidation(),
             DriverLicenseInterface::EXPIRATION_DATE => 'required|after:licence_issue_date',
             DriverLicenseInterface::ISSUE_DATE => 'required|after:driver_birth_date',
-            DriverLicenseInterface::SERIES => $required,
             DriverLicenseInterface::NUMBER => $required,
 
             // Car
@@ -142,7 +141,6 @@ class Lead extends FormRequest
             DriverLicenseInterface::ISSUE_COUNTRY => '"Страна выдачи ВУ"',
             DriverLicenseInterface::EXPIRATION_DATE => '"Дата окончания действия ВУ"',
             DriverLicenseInterface::ISSUE_DATE => '"Дата выдачи ВУ"',
-            DriverLicenseInterface::SERIES => '"Серия ВУ"',
             DriverLicenseInterface::NUMBER => '"Номер ВУ"',
             DriverLicenseInterface::ISSUE_DATE => '"Дата выдачи ВУ"',
             DriverLicenseInterface::EXPIRATION_DATE => '"Дата окончания действия ВУ"',

@@ -188,7 +188,6 @@ class ApiController extends Controller
 //                $message = 'Водитель с указанным ВУ уже зарегистрирован.';
                 $message = 'duplicate_driver_license';
                 $errors = [
-                    DriverLicenseInterface::SERIES => [$message],
                     DriverLicenseInterface::NUMBER => [$message],
                 ];
                 break;
@@ -196,7 +195,6 @@ class ApiController extends Controller
             case 'invalid_driver_license':
                 $message = 'invalid_driver_license';
                 $errors = [
-                    DriverLicenseInterface::SERIES => [$message],
                     DriverLicenseInterface::NUMBER => [$message],
                 ];
                 break;
