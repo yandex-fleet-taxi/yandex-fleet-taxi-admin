@@ -181,6 +181,7 @@ return [
         App\Providers\Psr7FactoryServiceProvider::class,
         App\Providers\CorsMiddlewareProvider::class,
         App\Providers\UpdateCarBrandsAndModelsCommandProvider::class,
+        App\Providers\CurlClientProvider::class
     ],
 
     /*
