@@ -93,8 +93,8 @@ class ApiController extends Controller
 
             $defaultDriverPostData = $this->defaultDriverPostData;
             $driverId = $this->createDriverByFrontendData($parkId, $data, $defaultDriverPostData);
-            $defaultCarPostData = $this->defaultCarPostData;
 
+            $defaultCarPostData = $this->defaultCarPostData;
             $carId = $this->createCarByFrontendData($data, $defaultCarPostData);
             $this->bindCarToDriver($parkId, $driverId, $carId);
 
@@ -187,6 +187,14 @@ class ApiController extends Controller
             case 'duplicate_driver_license':
 //                $message = 'Водитель с указанным ВУ уже зарегистрирован.';
                 $message = 'duplicate_driver_license';
+                $errors = [
+                    DriverLicenseInterface::SERIES => [$message],
+                    DriverLicenseInterface::NUMBER => [$message],
+                ];
+                break;
+
+            case 'invalid_driver_license':
+                $message = 'invalid_driver_license';
                 $errors = [
                     DriverLicenseInterface::SERIES => [$message],
                     DriverLicenseInterface::NUMBER => [$message],

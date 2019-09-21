@@ -2,11 +2,20 @@
 
 namespace Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarBrandsAndModels;
 
+use App\Helpers\FilenamesProvider;
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 
 class CarBrandModelsGenerator
 {
-    const DIR_PUBLIC_RELATIVE_NAME = 'js/data/car/models';
+    /**
+     * @var FilenamesProvider
+     */
+    private $filenamesProvider;
+
+    public function __construct(FilenamesProvider $filenamesProvider)
+    {
+        $this->filenamesProvider = $filenamesProvider;
+    }
 
     public function generateBrandsModels(YandexClientInterface $yandexClient, array $brandNames)
     {
@@ -23,6 +32,24 @@ class CarBrandModelsGenerator
         return $models;
     }
 
+    private function getModelsByBrandName(YandexClientInterface $yandexClient, $brandName)
+    {
+        $sourceData =  $yandexClient->getVehiclesCardModels($brandName);
+        $sourceModels = $this->getSourceModelsByData($sourceData);
+
+        return $this->getResultModelsBySourceModels($sourceModels);
+    }
+
+    private function getSourceModelsByData($sourceData)
+    {
+        return $sourceData['data'];
+    }
+
+    private function getResultModelsBySourceModels(array $sourceModels)
+    {
+        return array_map([$this, 'getModelName'], $sourceModels);
+    }
+
     private function storeModels(string $brandName, array $models)
     {
         $modelsFullFilename = $this->getModelsFullFilename($brandName);
@@ -33,31 +60,11 @@ class CarBrandModelsGenerator
 
     private function getModelsFullFilename(string $brandName)
     {
-        $relativePath = self::DIR_PUBLIC_RELATIVE_NAME . DIRECTORY_SEPARATOR . $brandName . '.json';
-
-        return public_path($relativePath);
-    }
-
-    private function getModelsByBrandName(YandexClientInterface $yandexClient, $brandName)
-    {
-        $sourceData =  $yandexClient->getVehiclesCardModels($brandName);
-        $sourceModels = $this->getSourceModelsByData($sourceData);
-
-        return $this->getResultModelsBySourceModels($sourceModels);
-    }
-
-    private function getResultModelsBySourceModels(array $sourceModels)
-    {
-        return array_map([$this, 'getModelName'], $sourceModels);
+        return $this->filenamesProvider->getBrandModelsFullFilename($brandName);
     }
 
     private function getModelName(array $model)
     {
         return $model['name'];
-    }
-
-    private function getSourceModelsByData($sourceData)
-    {
-        return $sourceData['data'];
     }
 }

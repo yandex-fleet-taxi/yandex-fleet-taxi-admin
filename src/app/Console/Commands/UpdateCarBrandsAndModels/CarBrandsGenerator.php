@@ -3,10 +3,21 @@
 namespace Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarBrandsAndModels;
 
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
+use App\Helpers\FilenamesProvider;
 
 class CarBrandsGenerator
 {
     const FILE_PUBLIC_RELATIVE_NAME = 'js/data/car/brands.json';
+
+    /**
+     * @var FilenamesProvider
+     */
+    private $filenamesProvider;
+
+    public function __construct(FilenamesProvider $filenamesProvider)
+    {
+        $this->filenamesProvider = $filenamesProvider;
+    }
 
     public function generateBrands(YandexClientInterface $yandexClient, string $parkId)
     {
@@ -34,9 +45,7 @@ class CarBrandsGenerator
 
     private function getBrandsFullFilename()
     {
-        $publicPath = public_path();
-
-        return $publicPath . DIRECTORY_SEPARATOR . self::FILE_PUBLIC_RELATIVE_NAME;
+        return $this->filenamesProvider->getBrandsFullFilename();
     }
 
     private function getBrandName(array $brand)

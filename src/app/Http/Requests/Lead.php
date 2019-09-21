@@ -2,13 +2,37 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\CarHelper;
 use Illuminate\Foundation\Http\FormRequest;
-use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverInterface;
-use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverLicenseInterface;
+use Illuminate\Validation\Rule;
 use Likemusic\YandexFleetTaxi\FrontendData\Contracts\CarInterface;
+use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverInterface;
+use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverLicense\IssueCountryInterface;
+use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverLicenseInterface;
+use ReflectionClass;
+use ReflectionException;
 
 class Lead extends FormRequest
 {
+    /**
+     * @var CarHelper
+     */
+    private $carHelper;
+
+    public function __construct(
+        CarHelper $carHelper,
+        array $query = [],
+        array $request = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = [],
+        $content = null
+    ) {
+        $this->carHelper = $carHelper;
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -23,6 +47,7 @@ class Lead extends FormRequest
      * Get the validation rules that apply to the request.
      * @see https://docs.google.com/spreadsheets/d/1QPisHDS7YYXGf5kcqXhvav2fDIBGZoAbOhethOog2ZI/edit#gid=1479188633
      * @return array
+     * @throws ReflectionException
      */
     public function rules()
     {
@@ -33,16 +58,17 @@ class Lead extends FormRequest
             DriverInterface::FIRST_NAME => $required,
             DriverInterface::LAST_NAME => $required,
             DriverInterface::WORK_PHONE => $required,
+            DriverInterface::BIRTH_DATE => 'date|before_or_equal:-18 years|before:licence_issue_date',
 
             // Driver License
-            DriverLicenseInterface::ISSUE_COUNTRY => $required,
-            DriverLicenseInterface::EXPIRATION_DATE => $required,
-            DriverLicenseInterface::ISSUE_DATE => $required,
+            DriverLicenseInterface::ISSUE_COUNTRY => $this->getDriverLicenseIssueCountryValidation(),
+            DriverLicenseInterface::EXPIRATION_DATE => 'required|after:licence_issue_date',
+            DriverLicenseInterface::ISSUE_DATE => 'required|after:driver_birth_date',
             DriverLicenseInterface::SERIES => $required,
             DriverLicenseInterface::NUMBER => $required,
 
             // Car
-            CarInterface::BRAND => $required,
+            CarInterface::BRAND => $this->getCarBrandValidation(),
             CarInterface::COLOR => $required,
             CarInterface::MODEL => $required,
             CarInterface::NUMBER => $required,
@@ -50,6 +76,51 @@ class Lead extends FormRequest
             CarInterface::VIN => "required|size:17",
             CarInterface::ISSUE_YEAR => $required,
         ];
+    }
+
+    /**
+     * @return array
+     * @throws ReflectionException
+     */
+    private function getDriverLicenseIssueCountryValidation()
+    {
+        $knownIssueCountries = $this->getKnownDriverLicenseIssueCountries();
+// @see \Likemusic\YandexFleetTaxi\FrontendData\ToYandexClientPostDataConverters\Converter\ToCreateDriver::getYandexClientCountryCodeByFrontCountry
+// $commaSeparatedCountries = implode(',', $knownIssueCountries);
+
+        return [
+            'required',
+            Rule::in($knownIssueCountries),
+        ];
+    }
+
+    /**
+     * @return array
+     * @throws ReflectionException
+     */
+    private function getKnownDriverLicenseIssueCountries()
+    {
+        $knownCountriesInterface = IssueCountryInterface::class;
+
+        $reflector = new ReflectionClass($knownCountriesInterface);
+        $constants = $reflector->getConstants();
+
+        return $constants;
+    }
+
+    private function getCarBrandValidation()
+    {
+        $knownCarBrands = $this->getKnownCarBrands();
+
+        return [
+            'required',
+            Rule::in($knownCarBrands),
+        ];
+    }
+
+    private function getKnownCarBrands()
+    {
+        return $this->carHelper->getKnownBrands();
     }
 
     /**
@@ -65,6 +136,7 @@ class Lead extends FormRequest
             DriverInterface::LAST_NAME => '"Фамилия"',
             DriverInterface::MIDDLE_NAME => '"Отчество"',
             DriverInterface::WORK_PHONE => '"Номер рабочего телефона"',
+            DriverInterface::BIRTH_DATE => '"Дата рождения"',
 
             // Driver License
             DriverLicenseInterface::ISSUE_COUNTRY => '"Страна выдачи ВУ"',
@@ -72,9 +144,43 @@ class Lead extends FormRequest
             DriverLicenseInterface::ISSUE_DATE => '"Дата выдачи ВУ"',
             DriverLicenseInterface::SERIES => '"Серия ВУ"',
             DriverLicenseInterface::NUMBER => '"Номер ВУ"',
+            DriverLicenseInterface::ISSUE_DATE => '"Дата выдачи ВУ"',
+            DriverLicenseInterface::EXPIRATION_DATE => '"Дата окончания действия ВУ"',
 
             // Car
-            CarInterface::VIN => '"VIN-код"'
+            CarInterface::VIN => '"VIN-код"',
+            CarInterface::BRAND => '"Марка автомобиля"',
+            CarInterface::MODEL => '"Модель автомобиля"'
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator(\Illuminate\Validation\Validator $validator)
+    {
+        $data = $validator->getData();
+        $carBrand = $data['car_brand'];
+
+        $knownCarBrands = $this->getKnownCarBrands();
+
+        if (!in_array($carBrand, $knownCarBrands)) {
+            return;
+        }
+
+        $knownCarModels = $this->getKnownCarBrandModels($carBrand);
+        $rules = [
+            'car_model' => [Rule::in($knownCarModels)]
+        ];
+
+        $validator->addRules($rules);
+    }
+
+    private function getKnownCarBrandModels(string $brand): array
+    {
+        return $this->carHelper->getKnownBrandModels($brand);
     }
 }
