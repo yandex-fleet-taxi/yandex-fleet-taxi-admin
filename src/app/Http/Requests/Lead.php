@@ -47,7 +47,7 @@ class Lead extends FormRequest
             CarInterface::MODEL => $required,
             CarInterface::NUMBER => $required,
             CarInterface::REGISTRATION => $required,
-            CarInterface::VIN => $required,
+            CarInterface::VIN => "required|size:17",
             CarInterface::ISSUE_YEAR => $required,
         ];
     }
@@ -60,16 +60,21 @@ class Lead extends FormRequest
     public function attributes()
     {
         return [
+            // Driver
             DriverInterface::FIRST_NAME => '"Имя"',
             DriverInterface::LAST_NAME => '"Фамилия"',
             DriverInterface::MIDDLE_NAME => '"Отчество"',
             DriverInterface::WORK_PHONE => '"Номер рабочего телефона"',
 
+            // Driver License
             DriverLicenseInterface::ISSUE_COUNTRY => '"Страна выдачи ВУ"',
             DriverLicenseInterface::EXPIRATION_DATE => '"Дата окончания действия ВУ"',
             DriverLicenseInterface::ISSUE_DATE => '"Дата выдачи ВУ"',
             DriverLicenseInterface::SERIES => '"Серия ВУ"',
             DriverLicenseInterface::NUMBER => '"Номер ВУ"',
+
+            // Car
+            CarInterface::VIN => '"VIN-код"'
         ];
     }
 }
