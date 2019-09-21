@@ -5,32 +5,32 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 use Likemusic\YandexFleetTaxiClient\Contracts\LanguageInterface;
-use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarBrandsAndModels\CarBrandsGenerator;
-use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarBrandsAndModels\CarBrandModelsGenerator;
+use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences\BrandsGenerator;
+use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences\BrandModelsGenerator;
 
-class UpdateCarBrandsAndModels extends Command
+class UpdateCarReferences extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'cars:update';
+    protected $signature = 'fleet:car-references:update';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Regenerate cars brands and models data by Yandex-provided data.';
+    protected $description = 'Regenerate car references (brands and models) data by Yandex-provided data.';
 
     /**
-     * @var CarBrandsGenerator
+     * @var BrandsGenerator
      */
     private $carBrandsGenerator;
 
     /**
-     * @var CarBrandModelsGenerator
+     * @var BrandModelsGenerator
      */
     private $carBrandModelsGenerator;
 
@@ -57,22 +57,22 @@ class UpdateCarBrandsAndModels extends Command
     /**
      * Create a new command instance.
      *
-     * @param CarBrandsGenerator $carBrandsGenerator
-     * @param CarBrandModelsGenerator $carBrandModelsGenerator
+     * @param BrandsGenerator $driverLicenseIssueCitiesGenerator
+     * @param BrandModelsGenerator $carBrandModelsGenerator
      * @param YandexClientInterface $yandexClient
      * @param string $yandexLogin
      * @param string $yandexPassword
      * @param string $parkId
      */
     public function __construct(
-        CarBrandsGenerator $carBrandsGenerator,
-        CarBrandModelsGenerator $carBrandModelsGenerator,
+        BrandsGenerator $driverLicenseIssueCitiesGenerator,
+        BrandModelsGenerator $carBrandModelsGenerator,
         YandexClientInterface $yandexClient,
         string $yandexLogin,
         string $yandexPassword,
         string $parkId
     ) {
-        $this->carBrandsGenerator = $carBrandsGenerator;
+        $this->carBrandsGenerator = $driverLicenseIssueCitiesGenerator;
         $this->carBrandModelsGenerator = $carBrandModelsGenerator;
         $this->yandexClient = $yandexClient;
         $this->yandexLogin = $yandexLogin;

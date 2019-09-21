@@ -1,14 +1,12 @@
 <?php
 
-namespace Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarBrandsAndModels;
+namespace Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences;
 
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 use App\Helpers\FilenamesProvider;
 
-class CarBrandsGenerator
+class BrandsGenerator
 {
-    const FILE_PUBLIC_RELATIVE_NAME = 'js/data/car/brands.json';
-
     /**
      * @var FilenamesProvider
      */
@@ -45,7 +43,7 @@ class CarBrandsGenerator
 
     private function getBrandsFullFilename()
     {
-        return $this->filenamesProvider->getBrandsFullFilename();
+        return $this->filenamesProvider->getCarBrandsFullFilename();
     }
 
     private function getBrandName(array $brand)

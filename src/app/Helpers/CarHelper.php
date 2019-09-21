@@ -29,7 +29,7 @@ class CarHelper
 
     private function getKnownBrandModelsFilename(string $brandName)
     {
-        return $this->filenamesProvider->getBrandModelsFullFilename($brandName);
+        return $this->filenamesProvider->getCarBrandModelsFullFilename($brandName);
     }
 
     private function jsonDecode(string $json)
@@ -39,6 +39,6 @@ class CarHelper
 
     private function getKnownBrandsFilename()
     {
-        return $this->filenamesProvider->getBrandsFullFilename();
+        return $this->filenamesProvider->getCarBrandsFullFilename();
     }
 }

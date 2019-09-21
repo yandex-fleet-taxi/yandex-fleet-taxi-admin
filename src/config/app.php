@@ -180,7 +180,8 @@ return [
         App\Providers\CurlHttpClientServiceProvider::class,
         App\Providers\Psr7FactoryServiceProvider::class,
         App\Providers\CorsMiddlewareProvider::class,
-        App\Providers\UpdateCarBrandsAndModelsCommandProvider::class,
+        App\Providers\UpdateCarReferencesCommandProvider::class,
+        App\Providers\UpdateDriverReferencesCommandProvider::class,
         App\Providers\CurlClientProvider::class
     ],
 

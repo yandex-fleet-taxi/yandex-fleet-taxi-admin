@@ -4,18 +4,27 @@ namespace App\Helpers;
 
 class FilenamesProvider
 {
-    const FILE_PUBLIC_RELATIVE_NAME = 'js/data/car/brands.json';
-    const DIR_PUBLIC_RELATIVE_NAME = 'js/data/car/models';
+    // CAR
+    const CAR_BRANDS_FILENAME = 'js/data/car/brands.json';
+    const CAR_BRAND_MODELS_DIR = 'js/data/car/models';
 
-    public function getBrandsFullFilename()
+    // DRIVER
+    const DRIVER_LICENSE_ISSUE_COUNTRY_FILENAME = 'js/data/driver/license/countries.json';
+
+    public function getCarBrandsFullFilename()
     {
-        return public_path(self::FILE_PUBLIC_RELATIVE_NAME);
+        return public_path(self::CAR_BRANDS_FILENAME);
     }
 
-    public function getBrandModelsFullFilename(string $brandName)
+    public function getCarBrandModelsFullFilename(string $brandName)
     {
-        $relativePath = self::DIR_PUBLIC_RELATIVE_NAME . DIRECTORY_SEPARATOR . $brandName . '.json';
+        $relativePath = self::CAR_BRAND_MODELS_DIR . DIRECTORY_SEPARATOR . $brandName . '.json';
 
         return public_path($relativePath);
+    }
+
+    public function getDriverLicenseIssueCountriesFullFilename()
+    {
+        return public_path(self::DRIVER_LICENSE_ISSUE_COUNTRY_FILENAME);
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarBrandsAndModels;
+namespace Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences;
 
 use App\Helpers\FilenamesProvider;
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 
-class CarBrandModelsGenerator
+class BrandModelsGenerator
 {
     /**
      * @var FilenamesProvider
@@ -60,7 +60,7 @@ class CarBrandModelsGenerator
 
     private function getModelsFullFilename(string $brandName)
     {
-        return $this->filenamesProvider->getBrandModelsFullFilename($brandName);
+        return $this->filenamesProvider->getCarBrandModelsFullFilename($brandName);
     }
 
     private function getModelName(array $model)

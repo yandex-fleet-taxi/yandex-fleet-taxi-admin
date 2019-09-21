@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Console\Commands\UpdateCarBrandsAndModels as UpdateCarBrandsAndModelsCommand;
+use App\Console\Commands\UpdateCarReferences as UpdateCarBrandsAndModelsCommand;
 use Illuminate\Contracts\Config\Repository as ConfigInterface;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
-class UpdateCarBrandsAndModelsCommandProvider extends ServiceProvider
+class UpdateCarReferencesCommandProvider extends ServiceProvider
 {
     /**
      * @var ConfigInterface
