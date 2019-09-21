@@ -2,69 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Lead;
+use App\Http\Requests\Lead as LeadFormRequest;
 use Exception;
-use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverInterface;
 use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverLicenseInterface;
-use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
-use App\Http\Requests\Lead as LeadFormRequest;
-use Illuminate\Validation\ValidationException;
-use Likemusic\YandexFleetTaxi\FrontendData\ToYandexClientPostDataConverters\Converter\ToCreateDriver as ToCreateDriverPostDataConverter;
 use Likemusic\YandexFleetTaxi\FrontendData\ToYandexClientPostDataConverters\Converter\ToCreateCar as ToCreateCarPostDataConverter;
-use Likemusic\YandexFleetTaxiClient\Exception as YandexClientException;
+use Likemusic\YandexFleetTaxi\FrontendData\ToYandexClientPostDataConverters\Converter\ToCreateDriver as ToCreateDriverPostDataConverter;
+use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 use Likemusic\YandexFleetTaxiClient\HttpJsonResponseException;
 use Likemusic\YandexFleetTaxiClient\HttpResponseException;
-use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 
 class ApiController extends Controller
 {
     /**
+     * @var array
+     */
+    protected $defaultCarPostData;
+    /**
      * @var ToCreateDriverPostDataConverter
      */
     private $toCreateDriverPostDataConverter;
-
     /**
      * @var ToCreateCarPostDataConverter
      */
     private $toCreateCarPostDataConverter;
-
     /**
      * @var YandexClientInterface
      */
     private $yandexClient;
-
     /**
      * @var string
      */
     private $parkId;
-
     /**
      * @var string
      */
     private $yandexLogin;
-
     /**
      * @var string
      */
     private $yandexPassword;
-
     /**
      * @var LoggerInterface
      */
     private $logger;
-
     /**
      * @var array
      */
     private $defaultDriverPostData;
-
-    /**
-     * @var array
-     */
-    protected $defaultCarPostData;
 
     public function __construct(
         string $parkId,
@@ -76,7 +63,8 @@ class ApiController extends Controller
         LoggerInterface $logger,
         array $defaultDriverPostData = [],
         array $defaultCarPostData = []
-    ) {
+    )
+    {
         $this->parkId = $parkId;
         $this->yandexLogin = $yandexLogin;
         $this->yandexPassword = $yandexPassword;
@@ -85,7 +73,7 @@ class ApiController extends Controller
         $this->toCreateCarPostDataConverter = $toCreateCarPostDataConverter;
         $this->logger = $logger;
         $this->defaultDriverPostData = $defaultDriverPostData;
-        $this->defaultCarPostData = $defaultCarPostData ;
+        $this->defaultCarPostData = $defaultCarPostData;
     }
 
     public function addLead(LeadFormRequest $request)
@@ -95,8 +83,7 @@ class ApiController extends Controller
         $ret = [];
 
         try {
-
-            $data = $request->validated();
+            $data = $request->all();
 
             $yandexLogin = $this->yandexLogin;
             $yandexPassword = $this->yandexPassword;
@@ -132,9 +119,31 @@ class ApiController extends Controller
         return $this->createJsonResponse($ret, $errors);
     }
 
-    private function bindCarToDriver(string $parkId, string $driverId, string $carId)
+    private function yandexFleetClientLogin(string $login, string $password)
     {
-        $this->yandexClient->bindDriverWithCar($parkId, $driverId, $carId);
+        $this->yandexClient->login($login, $password);
+    }
+
+    private function yandexFleetClientVisitHomepage()
+    {
+        $this->yandexClient->getDashboardPageData();
+    }
+
+    private function createDriverByFrontendData($parkId, array $frontendData, $defaultDriverPostData)
+    {
+        $yandexClientPostData = $this->convertFrontendDataToYandexClientCreateDriverPostData($frontendData, $defaultDriverPostData);
+
+        return $this->createDriver($parkId, $yandexClientPostData);
+    }
+
+    private function convertFrontendDataToYandexClientCreateDriverPostData(array $frontendData, array $defaultDriverPostData)
+    {
+        return $this->toCreateDriverPostDataConverter->convert($frontendData, $defaultDriverPostData);
+    }
+
+    private function createDriver($parkId, array $postData)
+    {
+        return $this->yandexClient->createDriver($parkId, $postData);
     }
 
     private function createCarByFrontendData(array $frontendData, array $defaultCarPostData)
@@ -146,28 +155,24 @@ class ApiController extends Controller
         return $createCarResponseData['data']['id'];
     }
 
-    private function createCar($postData)
-    {
-        return $this->yandexClient->storeVehicles($postData);
-    }
-
     private function convertFrontendDataToYandexClientCreateCarPostData(array $frontendData, array $defaultCarPostData)
     {
         return $this->toCreateCarPostDataConverter->convert($frontendData, $defaultCarPostData);
     }
 
-    protected function getErrorsByException(Exception $exception)
+    private function createCar($postData)
     {
-        return [
-            'common' => [$exception->getMessage()],
-        ];//todo
+        return $this->yandexClient->storeVehicles($postData);
     }
 
-    private function getErrorsByHttpResponseException(HttpResponseException $exception)
+    private function bindCarToDriver(string $parkId, string $driverId, string $carId)
     {
-        return [
-            'common' => ['http_response_error'],
-        ];//todo
+        $this->yandexClient->bindDriverWithCar($parkId, $driverId, $carId);
+    }
+
+    private function logHttpJsonResponseException(HttpJsonResponseException $exception)
+    {
+        $this->logger->error($exception->getMessage(), ['exception' => $exception]);//todo
     }
 
     private function getErrorsByHttpJsonResponseException(HttpJsonResponseException $exception)
@@ -208,6 +213,13 @@ class ApiController extends Controller
         return $errors;
     }
 
+    private function isRequestValidationErrorException(HttpJsonResponseException $exception)
+    {
+        return $exception->getCode() === 400
+            && $exception->getJsonCode() === 'REQUEST_VALIDATION_ERROR'
+            && $exception->getJsonMessage() === 'Some parameters are invalid';
+    }
+
     private function getRequestValidationErrorResponseErrors(HttpJsonResponseException $exception)
     {
         return [
@@ -217,21 +229,16 @@ class ApiController extends Controller
         ];
     }
 
-    private function isRequestValidationErrorException(HttpJsonResponseException $exception)
-    {
-        return $exception->getCode() === 400
-            && $exception->getJsonCode() === 'REQUEST_VALIDATION_ERROR'
-            && $exception->getJsonMessage() === 'Some parameters are invalid';
-    }
-
     private function logHttpResponseException(HttpResponseException $exception)
     {
         $this->logger->error($exception->getMessage(), ['exception' => $exception]);//todo
     }
 
-    private function logHttpJsonResponseException(HttpJsonResponseException $exception)
+    private function getErrorsByHttpResponseException(HttpResponseException $exception)
     {
-        $this->logger->error($exception->getMessage(), ['exception' => $exception]);//todo
+        return [
+            'common' => ['http_response_error'],
+        ];//todo
     }
 
     private function logException(Exception $exception, LeadFormRequest $request)
@@ -239,15 +246,18 @@ class ApiController extends Controller
         $this->logger->error($exception->getMessage(), ['exception' => $exception]);//todo
     }
 
-    private function yandexFleetClientVisitHomepage()
+    protected function getErrorsByException(Exception $exception)
     {
-        $this->yandexClient->getDashboardPageData();
+        return [
+            'common' => [$exception->getMessage()],
+        ];//todo
     }
 
-
-    private function yandexFleetClientLogin(string $login, string $password)
+    private function createJsonResponse($data, $error = false)
     {
-        $this->yandexClient->login($login, $password);
+        $status = !$error ? 200 : 422;
+
+        return response()->json($data, $status);
     }
 
     private function getDriverIdByFrontendData(string $parkId, array $frontendData)
@@ -259,6 +269,28 @@ class ApiController extends Controller
         $driversByWorkPhone = $this->getDriversByString($parkId, $driverWorkPhone)['data']['driver_profiles'];
 
         return $this->getDriverIdOrNullByFoundDrivers($driversByLicense, $driversByWorkPhone);
+    }
+
+    private function getDriverLicenseByFrontendData(array $frontendData)
+    {
+        return $this->toCreateDriverPostDataConverter->getDriverLicenceNumber($frontendData);
+    }
+
+    private function getDriverWorkPhoneByFrontendData(array $frontendData)
+    {
+        $driverPhones = $this->getDriverPhonesByFrontendData($frontendData);
+
+        return current($driverPhones);
+    }
+
+    private function getDriverPhonesByFrontendData(array $frontendData)
+    {
+        return $this->toCreateDriverPostDataConverter->getDriverPhones($frontendData);
+    }
+
+    private function getDriversByString($parkId, string $search)
+    {
+        return $this->yandexClient->getDrivers($parkId, $search);
     }
 
     private function getDriverIdOrNullByFoundDrivers(array $driversByLicense, array $driversByWorkPhone)
@@ -294,67 +326,21 @@ class ApiController extends Controller
             if (!$phoneDriverId) {
                 $driverId = $licenseDriverId;
             } else {
-                if($licenseDriverId === $phoneDriverId) {
+                if ($licenseDriverId === $phoneDriverId) {
                     $driverId = $licenseDriverId;
                 } else {
                     throw new InvalidArgumentException('Для указанного ВУ и номера рабочего телефона найдены разные водители.');
                 }
             }
-        } elseif($phoneDriverId) {
+        } elseif ($phoneDriverId) {
             $driverId = $phoneDriverId;
         }
 
         return $driverId;
     }
 
-    private function getDriversByString($parkId, string $search)
-    {
-        return $this->yandexClient->getDrivers($parkId, $search);
-    }
-
-    private function getDriverWorkPhoneByFrontendData(array $frontendData)
-    {
-        $driverPhones = $this->getDriverPhonesByFrontendData($frontendData);
-
-        return current($driverPhones);
-    }
-
-    private function getDriverPhonesByFrontendData(array $frontendData)
-    {
-        return $this->toCreateDriverPostDataConverter->getDriverPhones($frontendData);
-    }
-
-    private function getDriverLicenseByFrontendData(array $frontendData)
-    {
-        return $this->toCreateDriverPostDataConverter->getDriverLicenceNumber($frontendData);
-    }
-
-    private function createDriverByFrontendData($parkId, array $frontendData, $defaultDriverPostData)
-    {
-        $yandexClientPostData = $this->convertFrontendDataToYandexClientCreateDriverPostData($frontendData, $defaultDriverPostData);
-
-        return $this->createDriver($parkId, $yandexClientPostData);
-    }
-
-    private function createDriver($parkId, array $postData)
-    {
-        return $this->yandexClient->createDriver($parkId, $postData);
-    }
-
-    private function convertFrontendDataToYandexClientCreateDriverPostData(array $frontendData, array $defaultDriverPostData)
-    {
-        return $this->toCreateDriverPostDataConverter->convert($frontendData, $defaultDriverPostData);
-    }
-
     private function getErrorFieldNameAndMessageByException(Exception $exception)
     {
         return ['common', $exception->getMessage()];//todo
-    }
-
-    private function createJsonResponse($data, $error = false)
-    {
-        $status = !$error ? 200 : 422;
-
-        return response()->json($data, $status);
     }
 }

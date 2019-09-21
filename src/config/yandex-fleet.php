@@ -18,9 +18,8 @@ return [
                     'yandex'
                 ],
 
-                'work_rule_id' => 'a6cb3fbe61a54ba28f8f8b5e35b286db',
-
                 'balance_deny_onlycard' => false,
+                'work_rule_id' => 'a6cb3fbe61a54ba28f8f8b5e35b286db',
             ],
         ],
 
