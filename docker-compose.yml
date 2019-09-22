@@ -34,8 +34,8 @@ services:
   composer:
     build: docker/composer
     volumes:
-      - ./src:/app
-    working_dir: /app
+      - ./src:/home/h909220706/socol-taxi.ru/docs
+    working_dir: /home/h909220706/socol-taxi.ru/docs
     environment:
       - PHP_IDE_CONFIG=serverName=Docker
       - COMPOSER_AUTH=${COMPOSER_AUTH}
@@ -51,8 +51,8 @@ services:
   php:
     build: docker/php-cli
     volumes:
-      - ./src:/app
-    working_dir: /app
+      - ./src:/home/h909220706/socol-taxi.ru/docs
+    working_dir: /home/h909220706/socol-taxi.ru/docs
     depends_on:
       - mariadb
     environment:
@@ -70,8 +70,8 @@ services:
   artisan:
     build: docker/php-cli
     volumes:
-      - ./src:/app
-    working_dir: /app
+      - ./src:/home/h909220706/socol-taxi.ru/docs
+    working_dir: /home/h909220706/socol-taxi.ru/docs
     entrypoint:
       - php
       - artisan
@@ -92,9 +92,9 @@ services:
   serve:
     build: docker/php-cli
     volumes:
-      - ./src:/app
+      - ./src:/home/h909220706/socol-taxi.ru/docs
     command: php artisan serve
-    working_dir: /app
+    working_dir: /home/h909220706/socol-taxi.ru/docs
     ports:
       - ${HOST_SERVE_PORT}:${DEFAULT_SERVE_PORT}
     depends_on:
@@ -113,7 +113,7 @@ services:
 
   tests:
     build: ./docker/tests
-    working_dir: /app
+    working_dir: /home/h909220706/socol-taxi.ru/docs
     environment:
       - PHP_IDE_CONFIG=serverName=Docker
       - COMPOSER_AUTH=${COMPOSER_AUTH}
