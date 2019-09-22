@@ -76,13 +76,28 @@ class Lead extends FormRequest
 
             // Car
             CarInterface::BRAND => $this->getCarBrandValidation(),
-            CarInterface::COLOR => $required,
+            CarInterface::COLOR => $this->getCarColorValidation(),
             CarInterface::MODEL => $required,
             CarInterface::NUMBER => $required,
             CarInterface::REGISTRATION => $required,
             CarInterface::VIN => "required|size:17",
             CarInterface::ISSUE_YEAR => $this->getCarIssueYearValidation(),
         ];
+    }
+
+    private function getCarColorValidation()
+    {
+        $knownCarColors = $this->getKnownCarColors();
+
+        return [
+            'required',
+            Rule::in($knownCarColors),
+        ];
+    }
+
+    private function getKnownCarColors()
+    {
+        return $this->carHelper->getKnownColors();
     }
 
     private function getCarIssueYearValidation()
@@ -157,6 +172,7 @@ class Lead extends FormRequest
             CarInterface::BRAND => '"Марка автомобиля"',
             CarInterface::MODEL => '"Модель автомобиля"',
             CarInterface::ISSUE_YEAR => '"Год выпуска автомобиля"',
+            CarInterface::COLOR => '"Цвет автомобиля"',
         ];
     }
 

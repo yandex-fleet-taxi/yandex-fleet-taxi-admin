@@ -1,6 +1,6 @@
 <?php
 
-namespace Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences;
+namespace App\Console\Commands\UpdateCarReferences;
 
 use App\Helpers\References\FilenamesProvider;
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;

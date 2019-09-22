@@ -2,6 +2,9 @@
 var formUrl = 'http://sf.likemusic.loc/add?XDEBUG_SESSION_START=PHP_STORM';
 var formSelector = '#form127249742';
 
+var carColorSelectSelector = 'select[name=car_color]';
+var carColorJsonUrl = 'http://sf.likemusic.loc/js/data/car/colors.json';
+
 var carBrandSelectSelector = 'select[name=car_brand]';
 var carBrandsJsonUrl = 'http://sf.likemusic.loc/js/data/car/brands.json';
 
@@ -485,6 +488,11 @@ function generateCarBrandsSelect() {
     generateSelectByJsonUrl(carBrandSelectSelector, carBrandsJsonUrl,'Выберите марку ...');
 }
 
+function generateCarColorsSelect() {
+    generateSelectByJsonUrl(carColorSelectSelector, carColorJsonUrl,'Выберите цвет ...');
+}
+
+
 
 function generateSelectByJsonUrl(selectSelector, jsonUrl, firstEmptyTitle, selectedValue = null) {
     var $select = $(selectSelector);
@@ -504,7 +512,7 @@ function generateSelectByJsonUrl(selectSelector, jsonUrl, firstEmptyTitle, selec
 
 function generateCarIssueYearSelect() {
     var years = generateCarIssueYear();
-    generateSelectByItems(carIssueYearSelectSelector, years, 'Выберите год');
+    generateSelectByItems(carIssueYearSelectSelector, years, 'Выберите год ...');
 
     function generateCarIssueYear() {
         var years = [];
@@ -595,6 +603,7 @@ jQuery(function () {
     generateCarIssueYearSelect();
     generateDriverLicenseIssueCountrySelect();
     generateCarBrandsSelect();
+    generateCarColorsSelect();
     generateCarModelsSelect();
 
     var $form = jQuery(formSelector);

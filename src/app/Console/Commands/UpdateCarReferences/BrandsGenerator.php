@@ -1,52 +1,22 @@
 <?php
 
-namespace Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences;
+namespace App\Console\Commands\UpdateCarReferences;
 
-use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
-use App\Helpers\References\FilenamesProvider;
-
-class BrandsGenerator
+class BrandsGenerator extends BaseDataBasedGenerator
 {
-    /**
-     * @var FilenamesProvider
-     */
-    private $filenamesProvider;
-
-    public function __construct(FilenamesProvider $filenamesProvider)
+    protected function getItemsByData(array $data)
     {
-        $this->filenamesProvider = $filenamesProvider;
+        $sourceCarBrands = $data['data']['references']['car_brands'];
+
+        return array_map([$this, 'getName'], $sourceCarBrands);
     }
 
-    public function generateBrands(YandexClientInterface $yandexClient, string $parkId)
-    {
-        $vehiclesCardData = $yandexClient->getVehiclesCardData($parkId);
-        $brands = $this->getBrandsByVehiclesCardData($vehiclesCardData);
-        $this->saveBrands($brands);
-
-        return $brands;
-    }
-
-    private function getBrandsByVehiclesCardData(array $vehiclesCardData)
-    {
-        $sourceCarBrands = $vehiclesCardData['data']['references']['car_brands'];
-
-        return array_map([$this, 'getBrandName'], $sourceCarBrands);
-    }
-
-    private function saveBrands(array $brands)
-    {
-        $brandsFullFilename = $this->getBrandsFullFilename();
-        $json = json_encode($brands);
-
-        file_put_contents($brandsFullFilename, $json);
-    }
-
-    private function getBrandsFullFilename()
+    protected function getItemsFullFilename()
     {
         return $this->filenamesProvider->getCarBrandsFullFilename();
     }
 
-    private function getBrandName(array $brand)
+    private function getName(array $brand)
     {
         return $brand['name'];
     }

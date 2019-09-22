@@ -2,11 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\UpdateCarReferences\BrandModelsGenerator;
+use App\Console\Commands\UpdateCarReferences\BrandsGenerator;
+use App\Console\Commands\UpdateCarReferences\ColorsGenerator;
 use Illuminate\Console\Command;
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 use Likemusic\YandexFleetTaxiClient\Contracts\LanguageInterface;
-use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences\BrandsGenerator;
-use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences\BrandModelsGenerator;
 
 class UpdateCarReferences extends Command
 {
@@ -27,12 +28,17 @@ class UpdateCarReferences extends Command
     /**
      * @var BrandsGenerator
      */
-    private $carBrandsGenerator;
+    private $brandsGenerator;
 
     /**
      * @var BrandModelsGenerator
      */
-    private $carBrandModelsGenerator;
+    private $brandModelsGenerator;
+
+    /**
+     * @var ColorsGenerator
+     */
+    private $colorsGenerator;
 
     /**
      * @var YandexClientInterface
@@ -57,7 +63,8 @@ class UpdateCarReferences extends Command
     /**
      * Create a new command instance.
      *
-     * @param BrandsGenerator $driverLicenseIssueCitiesGenerator
+     * @param ColorsGenerator $colorsGenerator
+     * @param BrandsGenerator $carBrandsGenerator
      * @param BrandModelsGenerator $carBrandModelsGenerator
      * @param YandexClientInterface $yandexClient
      * @param string $yandexLogin
@@ -65,15 +72,18 @@ class UpdateCarReferences extends Command
      * @param string $parkId
      */
     public function __construct(
-        BrandsGenerator $driverLicenseIssueCitiesGenerator,
+        ColorsGenerator $colorsGenerator,
+        BrandsGenerator $carBrandsGenerator,
         BrandModelsGenerator $carBrandModelsGenerator,
         YandexClientInterface $yandexClient,
         string $yandexLogin,
         string $yandexPassword,
         string $parkId
-    ) {
-        $this->carBrandsGenerator = $driverLicenseIssueCitiesGenerator;
-        $this->carBrandModelsGenerator = $carBrandModelsGenerator;
+    )
+    {
+        $this->colorsGenerator = $colorsGenerator;
+        $this->brandsGenerator = $carBrandsGenerator;
+        $this->brandModelsGenerator = $carBrandModelsGenerator;
         $this->yandexClient = $yandexClient;
         $this->yandexLogin = $yandexLogin;
         $this->yandexPassword = $yandexPassword;
@@ -93,18 +103,15 @@ class UpdateCarReferences extends Command
         $parkId = $this->parkId;//todo: проверить нужен ли действительно parkId, или можно получить данные и без него
 
         $this->initYandexClient($yandexClient, $this->yandexLogin, $this->yandexPassword);
-        $brands = $this->generateBrands($yandexClient, $parkId);
+
+        $vehiclesCardData = $yandexClient->getVehiclesCardData($parkId);
+
+        $this->generateColors($vehiclesCardData);
+
+        $brands = $this->generateBrands($vehiclesCardData);
         $this->generateModelsForBrands($yandexClient, $brands);
-    }
 
-    private function generateModelsForBrands($yandexClient, $brands)
-    {
-        $this->carBrandModelsGenerator->generateBrandsModels($yandexClient, $brands);
-    }
-
-    private function generateBrands(YandexClientInterface $yandexClient, string $parkId)
-    {
-        return $this->carBrandsGenerator->generateBrands($yandexClient, $parkId);
+        return true;
     }
 
     private function initYandexClient(YandexClientInterface $yandexClient, $login, $password)
@@ -112,5 +119,20 @@ class UpdateCarReferences extends Command
         $yandexClient->login($login, $password);
         $yandexClient->getDashboardPageData();
         $yandexClient->changeLanguage(LanguageInterface::RUSSIAN);
+    }
+
+    private function generateColors(array $vehiclesCardData)
+    {
+        return $this->colorsGenerator->generate($vehiclesCardData);
+    }
+
+    private function generateBrands(array $vehiclesCardData)
+    {
+        return $this->brandsGenerator->generate($vehiclesCardData);
+    }
+
+    private function generateModelsForBrands($yandexClient, $brands)
+    {
+        $this->brandModelsGenerator->generateBrandsModels($yandexClient, $brands);
     }
 }
