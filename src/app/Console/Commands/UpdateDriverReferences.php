@@ -3,11 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateDriverReferences\CitiesGenerator;
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 use Likemusic\YandexFleetTaxiClient\Contracts\LanguageInterface;
-use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences\BrandsGenerator;
-use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences\BrandModelsGenerator;
-use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateDriverReferences\CitiesGenerator;
 
 class UpdateDriverReferences extends Command
 {
@@ -86,12 +84,9 @@ class UpdateDriverReferences extends Command
         $parkId = $this->parkId;//todo: проверить нужен ли действительно parkId, или можно получить данные и без него
 
         $this->initYandexClient($yandexClient, $this->yandexLogin, $this->yandexPassword);
-        $cities = $this->generateCities($yandexClient, $parkId);
-    }
+        $this->generateCities($yandexClient, $parkId);
 
-    private function generateCities(YandexClientInterface $yandexClient, string $parkId)
-    {
-        return $this->driverLicenseIssueCitiesGenerator->generateItems($yandexClient, $parkId);
+        return true;
     }
 
     private function initYandexClient(YandexClientInterface $yandexClient, $login, $password)
@@ -99,5 +94,10 @@ class UpdateDriverReferences extends Command
         $yandexClient->login($login, $password);
         $yandexClient->getDashboardPageData();
         $yandexClient->changeLanguage(LanguageInterface::RUSSIAN);
+    }
+
+    private function generateCities(YandexClientInterface $yandexClient, string $parkId)
+    {
+        return $this->driverLicenseIssueCitiesGenerator->generateItems($yandexClient, $parkId);
     }
 }
