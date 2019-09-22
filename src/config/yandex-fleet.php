@@ -5,7 +5,7 @@ return [
     'password' => env('YANDEX_FLEET_PASSWORD'),
     'park_id' => env('YANDEX_FLEET_PARK_ID'),
 
-    'cors_host' => 'http://project1589609.tilda.ws',
+    'cors_host' => env('CORS_HOST'),
 
     'default_post_data_values' => [
         'driver' => [
@@ -19,7 +19,7 @@ return [
                 ],
 
                 'balance_deny_onlycard' => false,
-                'work_rule_id' => 'a6cb3fbe61a54ba28f8f8b5e35b286db',
+                'work_rule_id' => env('YANDEX_FLEET_WORK_RULE_ID'),
             ],
         ],
 
@@ -27,7 +27,7 @@ return [
             'booster_count' => 0,
             'callsign' => 'тест',
             'cargo_loaders' => 0,
-            'park_id' => '8d40b7c41af544afa0499b9d0bdf2430',
+            'park_id' => env('YANDEX_FLEET_PARK_ID'),
             'status' => 'working',//todo
             'transmission' => 'unknown',
         ]
