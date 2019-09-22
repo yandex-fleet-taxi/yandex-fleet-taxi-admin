@@ -2,25 +2,29 @@
 
 namespace App\Http\Requests;
 
-use App\Helpers\CarHelper;
+use App\Helpers\References\CarReferencesProvider;
+use App\Helpers\References\DriverReferencesProvider;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Likemusic\YandexFleetTaxi\FrontendData\Contracts\CarInterface;
 use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverInterface;
-use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverLicense\IssueCountryInterface;
 use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverLicenseInterface;
-use ReflectionClass;
-use ReflectionException;
 
 class Lead extends FormRequest
 {
     /**
-     * @var CarHelper
+     * @var CarReferencesProvider
      */
     private $carHelper;
 
+    /**
+     * @var DriverReferencesProvider
+     */
+    private $driverReferencesProvider;
+
     public function __construct(
-        CarHelper $carHelper,
+        CarReferencesProvider $carHelper,
+        DriverReferencesProvider $driverReferencesProvider,
         array $query = [],
         array $request = [],
         array $attributes = [],
@@ -28,8 +32,11 @@ class Lead extends FormRequest
         array $files = [],
         array $server = [],
         $content = null
-    ) {
+    )
+    {
         $this->carHelper = $carHelper;
+        $this->driverReferencesProvider = $driverReferencesProvider;
+
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
     }
 
@@ -47,7 +54,6 @@ class Lead extends FormRequest
      * Get the validation rules that apply to the request.
      * @see https://docs.google.com/spreadsheets/d/1QPisHDS7YYXGf5kcqXhvav2fDIBGZoAbOhethOog2ZI/edit#gid=1479188633
      * @return array
-     * @throws ReflectionException
      */
     public function rules()
     {
@@ -79,13 +85,10 @@ class Lead extends FormRequest
 
     /**
      * @return array
-     * @throws ReflectionException
      */
     private function getDriverLicenseIssueCountryValidation()
     {
         $knownIssueCountries = $this->getKnownDriverLicenseIssueCountries();
-// @see \Likemusic\YandexFleetTaxi\FrontendData\ToYandexClientPostDataConverters\Converter\ToCreateDriver::getYandexClientCountryCodeByFrontCountry
-// $commaSeparatedCountries = implode(',', $knownIssueCountries);
 
         return [
             'required',
@@ -95,16 +98,10 @@ class Lead extends FormRequest
 
     /**
      * @return array
-     * @throws ReflectionException
      */
     private function getKnownDriverLicenseIssueCountries()
     {
-        $knownCountriesInterface = IssueCountryInterface::class;
-
-        $reflector = new ReflectionClass($knownCountriesInterface);
-        $constants = $reflector->getConstants();
-
-        return $constants;
+        return $this->driverReferencesProvider->getKnownCountries();
     }
 
     private function getCarBrandValidation()
@@ -155,7 +152,7 @@ class Lead extends FormRequest
     /**
      * Configure the validator instance.
      *
-     * @param  \Illuminate\Validation\Validator  $validator
+     * @param  \Illuminate\Validation\Validator $validator
      * @return void
      */
     public function withValidator(\Illuminate\Validation\Validator $validator)

@@ -1,16 +1,9 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Helpers\References;
 
-class CarHelper
+class CarReferencesProvider extends BaseReferencesProvider
 {
-    private $filenamesProvider;
-
-    public function __construct(FilenamesProvider $filenamesProvider)
-    {
-        $this->filenamesProvider = $filenamesProvider;
-    }
-
     public function getKnownBrands()
     {
         $brandsFullFilename = $this->getKnownBrandsFilename();
@@ -30,11 +23,6 @@ class CarHelper
     private function getKnownBrandModelsFilename(string $brandName)
     {
         return $this->filenamesProvider->getCarBrandModelsFullFilename($brandName);
-    }
-
-    private function jsonDecode(string $json)
-    {
-        return json_decode($json, true);
     }
 
     private function getKnownBrandsFilename()

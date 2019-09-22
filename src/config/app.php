@@ -182,7 +182,8 @@ return [
         App\Providers\CorsMiddlewareProvider::class,
         App\Providers\UpdateCarReferencesCommandProvider::class,
         App\Providers\UpdateDriverReferencesCommandProvider::class,
-        App\Providers\CurlClientProvider::class
+        App\Providers\CurlClientProvider::class,
+        App\Providers\DriverLicenceIssueCountryProvider::class,
     ],
 
     /*

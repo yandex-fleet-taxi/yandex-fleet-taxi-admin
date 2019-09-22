@@ -2,7 +2,7 @@
 
 namespace Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateCarReferences;
 
-use App\Helpers\FilenamesProvider;
+use App\Helpers\References\FilenamesProvider;
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 
 class BrandModelsGenerator

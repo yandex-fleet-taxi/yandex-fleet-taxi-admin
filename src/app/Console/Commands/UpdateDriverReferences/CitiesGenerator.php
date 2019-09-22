@@ -2,7 +2,7 @@
 
 namespace Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateDriverReferences;
 
-use App\Helpers\FilenamesProvider;
+use App\Helpers\References\FilenamesProvider;
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 
 class CitiesGenerator
@@ -21,7 +21,7 @@ class CitiesGenerator
     {
         $yandexData = $yandexClient->getDriversCardData($parkId);
         $cities = $this->getItemsByYandexData($yandexData);
-        sort($cities);
+        asort($cities);
 
         $this->saveItems($cities);
 
@@ -31,8 +31,15 @@ class CitiesGenerator
     private function getItemsByYandexData(array $yandexData)
     {
         $countries = $yandexData['data']['references']['countries'];
+        $ret = [];
 
-        return array_map([$this, 'getNameRu'], $countries);
+        foreach ($countries as $country) {
+            $code = $country['code'];
+            $ruName = $country['name_ru'];
+            $ret[$code] = $ruName;
+        }
+
+        return $ret;
     }
 
     private function saveItems(array $brands)
