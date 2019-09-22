@@ -1,5 +1,5 @@
 /* CONFIG PARAMETERS */
-var baseHost = 'http://sf.likemusic.loc';
+// var baseHost = 'http://sf.likemusic.loc';
 
 // formUrl = 'https://forms.tildacdn.com/procces/';
 var formUrl = baseHost + '/add?XDEBUG_SESSION_START=PHP_STORM';
