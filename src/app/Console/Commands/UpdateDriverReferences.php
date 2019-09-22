@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\UpdateDriverReferences\CitiesGenerator;
 use Illuminate\Console\Command;
-use Likemusic\YandexFleetTaxi\LeadMonitor\GoogleSpreadsheet\app\Console\Commands\UpdateDriverReferences\CitiesGenerator;
 use Likemusic\YandexFleetTaxiClient\Contracts\ClientInterface as YandexClientInterface;
 use Likemusic\YandexFleetTaxiClient\Contracts\LanguageInterface;
 
