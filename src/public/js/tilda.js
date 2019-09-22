@@ -1,63 +1,30 @@
+/* CONFIG PARAMETERS */
+var baseHost = 'http://sf.likemusic.loc';
+
 // formUrl = 'https://forms.tildacdn.com/procces/';
-var formUrl = 'http://sf.likemusic.loc/add?XDEBUG_SESSION_START=PHP_STORM';
+var formUrl = baseHost + '/add?XDEBUG_SESSION_START=PHP_STORM';
 var formSelector = '#form127249742';
 
 var carColorSelectSelector = 'select[name=car_color]';
-var carColorJsonUrl = 'http://sf.likemusic.loc/js/data/car/colors.json';
+var carColorJsonUrl = baseHost + '/js/data/car/colors.json';
 
 var carBrandSelectSelector = 'select[name=car_brand]';
-var carBrandsJsonUrl = 'http://sf.likemusic.loc/js/data/car/brands.json';
+var carBrandsJsonUrl = baseHost + '/js/data/car/brands.json';
 
 var carModelsSelectSelector = 'select[name=car_model]';
-var carModelsJsonUrlPattern = 'http://sf.likemusic.loc/js/data/car/models/';
+var carModelsJsonUrlPattern = baseHost + '/js/data/car/models/';
 
 var carIssueYearSelectSelector = 'select[name=car_issue_year]';
 var carIssueYearMin = 1984;
 
 var driverLicenseIssueCountrySelector = 'select[name=licence_issue_country]';
-var driverLicenseIssueCountryJsonUrl = 'http://sf.likemusic.loc/js/data/driver/license/countries.json';
+var driverLicenseIssueCountryJsonUrl = baseHost + '/js/data/driver/license/countries.json';
 
 var errorCodeNumber = 0;
 
-function addNewErrorMessages() {
-    // RU
-    var ruMessages = {
-        'duplicate_driver_license': 'Водитель с указанным ВУ уже зарегистрирован.',
-        'invalid_driver_license': 'Неверные данные ВУ.',
-        'duplicate_phone': 'Водитель с указанным номером рабочего телефона уже зарегистрирован.',
-        'unknown': 'Во время обработки запроса произошла неизветная ошибка. Попробуте повторить отправку формы немного позже.',
-        'http_response_error': 'Во время обработки данных сервером Яндекса произошла ошибка. Попробуте повторить отправку формы немного позже.',
-    };
-
-    Object.assign(window.tildaForm.arValidateErrors.RU, ruMessages);
-
-    // EN
-    var enMessages = {
-        'duplicate_driver_license': 'Driver with that license already exists.',
-        'invalid_driver_license': 'Invalid driver license.',
-        'duplicate_phone': 'Driver with that working phone number already exists.',
-        'unknown': 'There is an error occurred while processing form data. Please try again later.',
-        'http_response_error': 'There is an error occurred on Yandex server, while processing form data. Please try again later.',
-    };
-
-    Object.assign(window.tildaForm.arValidateErrors.EN, enMessages);
-}
-
-/**
- * @param str
- * @returns boolean
- */
-function isJSON(str) {
-    try {
-        JSON.parse(str);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-
+// Tilda form overrides
 window.tildaFormNew = {};
-window.tildaFormNew.showErrors = function($jform, errors){
+window.tildaFormNew.showErrors = function ($jform, errors) {
     var validateErrors = window.tildaForm.arValidateErrors;
     var knownErrorCodesRu = validateErrors.RU;
     var knownErrorCodesEn = validateErrors.EN;
@@ -80,7 +47,6 @@ window.tildaFormNew.showErrors = function($jform, errors){
 
     window.tildaForm.showErrors($jform, errors);
 };
-
 window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) {
     window.tildaForm.tildapayment = !1;
     if ($jform.data('formcart') == 'y') {
@@ -483,128 +449,11 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
     }
 };
 
+addNewErrorMessages();
 
-function generateCarBrandsSelect() {
-    generateSelectByJsonUrl(carBrandSelectSelector, carBrandsJsonUrl,'Выберите марку ...');
-}
-
-function generateCarColorsSelect() {
-    generateSelectByJsonUrl(carColorSelectSelector, carColorJsonUrl,'Выберите цвет ...');
-}
-
-
-
-function generateSelectByJsonUrl(selectSelector, jsonUrl, firstEmptyTitle, selectedValue = null) {
-    var $select = $(selectSelector);
-
-    $select.prop('disabled', true);
-    $select.empty();
-    var $firstOption = $('<option>').val('').text('Загружается ...');
-    $select.append($firstOption);
-
-    $.getJSON(jsonUrl, function (items) {
-        fillSelectByItems($select, items, selectedValue);
-
-        $firstOption.text(firstEmptyTitle);
-        $select.prop('disabled', false);
-    });
-}
-
-function generateCarIssueYearSelect() {
-    var years = generateCarIssueYear();
-    generateSelectByItems(carIssueYearSelectSelector, years, 'Выберите год ...');
-
-    function generateCarIssueYear() {
-        var years = [];
-        var currentYear = getCurrentYear();
-
-        for (var i = currentYear; i >= carIssueYearMin; i--) {
-            years.push(i);
-        }
-
-        return years;
-
-        function getCurrentYear() {
-            var date = new Date();
-
-            return date.getFullYear();
-        }
-    }
-}
-
-
-function generateSelectByItems(selectSelector, items, firstEmptyTitle, selectedValue = null) {
-    var $select = $(selectSelector);
-
-    $select.prop('disabled', true);
-    $select.empty();
-    var $firstOption = $('<option>').val('').text('Генерируется ...');
-    $select.append($firstOption);
-
-    fillSelectByItems($select, items, selectedValue);
-
-    $firstOption.text(firstEmptyTitle);
-    $select.prop('disabled', false);
-}
-
-function fillSelectByItems($select, items, selectedValue = null) {
-    $.each(items, function (key, item) {
-        var option = $('<option>').attr('value', item).text(item);
-        if (selectedValue === item) {
-            option.prop('selected', true);
-        }
-
-        $select.append(option);
-    });
-}
-
-function generateDriverLicenseIssueCountrySelect() {
-    generateSelectByJsonUrl(driverLicenseIssueCountrySelector, driverLicenseIssueCountryJsonUrl, 'Выберите страну ...', 'Россия');
-}
-
-function generateCarModelsSelect() {
-    var $modelsSelect = $(carModelsSelectSelector);
-    $modelsSelect.empty();
-    var option = $('<option>').prop('selected', true).text('Сперва выберите марку автомобиля в поле выше.');
-    $modelsSelect.append(option);
-    $modelsSelect.prop('disabled', 'disabled');
-
-    $(carBrandSelectSelector).change(function () {
-        var brand = $(this).val();
-        $modelsSelect.empty();
-
-        if (!brand) {
-            option = $('<option>').prop('selected', true).text('Сперва выберите марку автомобиля в поле выше.');
-            $modelsSelect.append(option);
-            $modelsSelect.prop('disabled', 'disabled');
-
-            return;
-        }
-
-        $modelsSelect.prop('disabled', 'disabled');
-        var firstOption = $('<option>').val('').text('Загрузка моделей ...');
-        $modelsSelect.append(firstOption);
-
-        var carModelsJsonUrl = carModelsJsonUrlPattern + brand + '.json';
-        $.getJSON(carModelsJsonUrl, function (models) {
-            $.each(models, function (key, model) {
-                option = $('<option>').attr('value', model).text(model);
-                $modelsSelect.append(option);
-            });
-
-            firstOption.text('Выберите модель ...');
-            $modelsSelect.prop('disabled', false);
-        });
-    });
-}
-
+// Generate selects and set own submit handler.
 jQuery(function () {
-    addNewErrorMessages();
-    generateCarIssueYearSelect();
-    generateDriverLicenseIssueCountrySelect();
-    generateCarBrandsSelect();
-    generateCarColorsSelect();
-    generateCarModelsSelect();
+    generateReferenceSelects();
 
     var $form = jQuery(formSelector);
     var form = $form.get(0);
@@ -612,7 +461,6 @@ jQuery(function () {
     var r = $r.get(0);
 
     $('.r').off('click', '.js-form-proccess [type=submit]');
-
     $('.r').on('click', '.js-form-proccess [type=submit]', function (event) {
         event.preventDefault();
         var btnformsubmit = $(this);
@@ -696,9 +544,165 @@ jQuery(function () {
 
         return !1
     });
-    // $r.bindFirst('click', '.js-form-proccess [type=submit]', clickHandler);
     // $r.bindFirst('submit', '.js-form-proccess', submitHandler);
-
-//jQuery.data(r, "events");
 });
 
+function addNewErrorMessages() {
+    // RU
+    var ruMessages = {
+        'duplicate_driver_license': 'Водитель с указанным ВУ уже зарегистрирован.',
+        'invalid_driver_license': 'Неверные данные ВУ.',
+        'duplicate_phone': 'Водитель с указанным номером рабочего телефона уже зарегистрирован.',
+        'unknown': 'Во время обработки запроса произошла неизветная ошибка. Попробуте повторить отправку формы немного позже.',
+        'http_response_error': 'Во время обработки данных сервером Яндекса произошла ошибка. Попробуте повторить отправку формы немного позже.',
+    };
+
+    Object.assign(window.tildaForm.arValidateErrors.RU, ruMessages);
+
+    // EN
+    var enMessages = {
+        'duplicate_driver_license': 'Driver with that license already exists.',
+        'invalid_driver_license': 'Invalid driver license.',
+        'duplicate_phone': 'Driver with that working phone number already exists.',
+        'unknown': 'There is an error occurred while processing form data. Please try again later.',
+        'http_response_error': 'There is an error occurred on Yandex server, while processing form data. Please try again later.',
+    };
+
+    Object.assign(window.tildaForm.arValidateErrors.EN, enMessages);
+}
+
+function generateReferenceSelects() {
+    generateCarIssueYearSelect();
+    generateDriverLicenseIssueCountrySelect();
+    generateCarBrandsSelect();
+    generateCarColorsSelect();
+    generateCarModelsSelect();
+
+    return true;
+
+    // Domain functions
+    function generateCarIssueYearSelect() {
+        var years = generateCarIssueYear();
+        generateSelectByItems(carIssueYearSelectSelector, years, 'Выберите год ...');
+
+        function generateCarIssueYear() {
+            var years = [];
+            var currentYear = getCurrentYear();
+
+            for (var i = currentYear; i >= carIssueYearMin; i--) {
+                years.push(i);
+            }
+
+            return years;
+
+            function getCurrentYear() {
+                var date = new Date();
+
+                return date.getFullYear();
+            }
+        }
+    }
+
+    function generateDriverLicenseIssueCountrySelect() {
+        generateSelectByJsonUrl(driverLicenseIssueCountrySelector, driverLicenseIssueCountryJsonUrl, 'Выберите страну ...', 'Россия');
+    }
+
+    function generateCarBrandsSelect() {
+        generateSelectByJsonUrl(carBrandSelectSelector, carBrandsJsonUrl, 'Выберите марку ...');
+    }
+
+    function generateCarColorsSelect() {
+        generateSelectByJsonUrl(carColorSelectSelector, carColorJsonUrl, 'Выберите цвет ...');
+    }
+
+    function generateCarModelsSelect() {
+        var $modelsSelect = $(carModelsSelectSelector);
+        $modelsSelect.empty();
+        var option = $('<option>').prop('selected', true).text('Сперва выберите марку автомобиля в поле выше.');
+        $modelsSelect.append(option);
+        $modelsSelect.prop('disabled', 'disabled');
+
+        $(carBrandSelectSelector).change(function () {
+            var brand = $(this).val();
+            $modelsSelect.empty();
+
+            if (!brand) {
+                option = $('<option>').prop('selected', true).text('Сперва выберите марку автомобиля в поле выше.');
+                $modelsSelect.append(option);
+                $modelsSelect.prop('disabled', 'disabled');
+
+                return;
+            }
+
+            $modelsSelect.prop('disabled', 'disabled');
+            var firstOption = $('<option>').val('').text('Загрузка моделей ...');
+            $modelsSelect.append(firstOption);
+
+            var carModelsJsonUrl = carModelsJsonUrlPattern + brand + '.json';
+            $.getJSON(carModelsJsonUrl, function (models) {
+                $.each(models, function (key, model) {
+                    option = $('<option>').attr('value', model).text(model);
+                    $modelsSelect.append(option);
+                });
+
+                firstOption.text('Выберите модель ...');
+                $modelsSelect.prop('disabled', false);
+            });
+        });
+    }
+
+    // Select generation functions
+    function generateSelectByJsonUrl(selectSelector, jsonUrl, firstEmptyTitle, selectedValue = null) {
+        var $select = $(selectSelector);
+
+        $select.prop('disabled', true);
+        $select.empty();
+        var $firstOption = $('<option>').val('').text('Загружается ...');
+        $select.append($firstOption);
+
+        $.getJSON(jsonUrl, function (items) {
+            fillSelectByItems($select, items, selectedValue);
+
+            $firstOption.text(firstEmptyTitle);
+            $select.prop('disabled', false);
+        });
+    }
+
+    function generateSelectByItems(selectSelector, items, firstEmptyTitle, selectedValue = null) {
+        var $select = $(selectSelector);
+
+        $select.prop('disabled', true);
+        $select.empty();
+        var $firstOption = $('<option>').val('').text('Генерируется ...');
+        $select.append($firstOption);
+
+        fillSelectByItems($select, items, selectedValue);
+
+        $firstOption.text(firstEmptyTitle);
+        $select.prop('disabled', false);
+    }
+
+    function fillSelectByItems($select, items, selectedValue = null) {
+        $.each(items, function (key, item) {
+            var option = $('<option>').attr('value', item).text(item);
+            if (selectedValue === item) {
+                option.prop('selected', true);
+            }
+
+            $select.append(option);
+        });
+    }
+}
+
+/**
+ * @param str
+ * @returns boolean
+ */
+function isJSON(str) {
+    try {
+        JSON.parse(str);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
