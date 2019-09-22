@@ -1,5 +1,5 @@
-// $formurl = 'https://forms.tildacdn.com/procces/';
-var $formurl = 'http://sf.likemusic.loc/add?XDEBUG_SESSION_START=PHP_STORM';
+// formUrl = 'https://forms.tildacdn.com/procces/';
+var formUrl = 'http://sf.likemusic.loc/add?XDEBUG_SESSION_START=PHP_STORM';
 var formSelector = '#form127249742';
 
 var carBrandSelectSelector = 'select[name=car_brand]';
@@ -7,6 +7,9 @@ var carBrandsJsonUrl = 'http://sf.likemusic.loc/js/data/car/brands.json';
 
 var carModelsSelectSelector = 'select[name=car_model]';
 var carModelsJsonUrlPattern = 'http://sf.likemusic.loc/js/data/car/models/';
+
+var carIssueYearSelectSelector = 'select[name=car_issue_year]';
+var carIssueYearMin = 1984;
 
 var driverLicenseIssueCountrySelector = 'select[name=licence_issue_country]';
 var driverLicenseIssueCountryJsonUrl = 'http://sf.likemusic.loc/js/data/driver/license/countries.json';
@@ -152,7 +155,7 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
         }
         $.ajax({
             type: "POST",
-            url: $formurl,
+            url: formUrl,
             data: d,
             dataType: "json",
             xhrFields: {
@@ -479,10 +482,11 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
 
 
 function generateCarBrandsSelect() {
-    generateSelect(carBrandSelectSelector, carBrandsJsonUrl,'Выберите марку ...');
+    generateSelectByJsonUrl(carBrandSelectSelector, carBrandsJsonUrl,'Выберите марку ...');
 }
 
-function generateSelect(selectSelector, jsonUrl, firstEmptyTitle) {
+
+function generateSelectByJsonUrl(selectSelector, jsonUrl, firstEmptyTitle, selectedValue = null) {
     var $select = $(selectSelector);
 
     $select.prop('disabled', true);
@@ -491,18 +495,63 @@ function generateSelect(selectSelector, jsonUrl, firstEmptyTitle) {
     $select.append($firstOption);
 
     $.getJSON(jsonUrl, function (items) {
-        $.each(items, function (key, item) {
-            var option = $('<option>').attr('value', item).text(item);
-            $select.append(option);
-        });
+        fillSelectByItems($select, items, selectedValue);
 
         $firstOption.text(firstEmptyTitle);
         $select.prop('disabled', false);
     });
 }
 
+function generateCarIssueYearSelect() {
+    var years = generateCarIssueYear();
+    generateSelectByItems(carIssueYearSelectSelector, years, 'Выберите год');
+
+    function generateCarIssueYear() {
+        var years = [];
+        var currentYear = getCurrentYear();
+
+        for (var i = currentYear; i >= carIssueYearMin; i--) {
+            years.push(i);
+        }
+
+        return years;
+
+        function getCurrentYear() {
+            var date = new Date();
+
+            return date.getFullYear();
+        }
+    }
+}
+
+
+function generateSelectByItems(selectSelector, items, firstEmptyTitle, selectedValue = null) {
+    var $select = $(selectSelector);
+
+    $select.prop('disabled', true);
+    $select.empty();
+    var $firstOption = $('<option>').val('').text('Генерируется ...');
+    $select.append($firstOption);
+
+    fillSelectByItems($select, items, selectedValue);
+
+    $firstOption.text(firstEmptyTitle);
+    $select.prop('disabled', false);
+}
+
+function fillSelectByItems($select, items, selectedValue = null) {
+    $.each(items, function (key, item) {
+        var option = $('<option>').attr('value', item).text(item);
+        if (selectedValue === item) {
+            option.prop('selected', true);
+        }
+
+        $select.append(option);
+    });
+}
+
 function generateDriverLicenseIssueCountrySelect() {
-    generateSelect(driverLicenseIssueCountrySelector, driverLicenseIssueCountryJsonUrl, 'Выберите страну ...');
+    generateSelectByJsonUrl(driverLicenseIssueCountrySelector, driverLicenseIssueCountryJsonUrl, 'Выберите страну ...', 'Россия');
 }
 
 function generateCarModelsSelect() {
@@ -543,6 +592,7 @@ function generateCarModelsSelect() {
 
 jQuery(function () {
     addNewErrorMessages();
+    generateCarIssueYearSelect();
     generateDriverLicenseIssueCountrySelect();
     generateCarBrandsSelect();
     generateCarModelsSelect();

@@ -12,6 +12,8 @@ use Likemusic\YandexFleetTaxi\FrontendData\Contracts\DriverLicenseInterface;
 
 class Lead extends FormRequest
 {
+    const MIN_CAR_ISSUE_YEAR = 1984;
+
     /**
      * @var CarReferencesProvider
      */
@@ -79,8 +81,16 @@ class Lead extends FormRequest
             CarInterface::NUMBER => $required,
             CarInterface::REGISTRATION => $required,
             CarInterface::VIN => "required|size:17",
-            CarInterface::ISSUE_YEAR => $required,
+            CarInterface::ISSUE_YEAR => $this->getCarIssueYearValidation(),
         ];
+    }
+
+    private function getCarIssueYearValidation()
+    {
+        $minYear = self::MIN_CAR_ISSUE_YEAR;
+        $maxYear = date('Y');
+
+        return "required|integer|between:{$minYear},{$maxYear}";
     }
 
     /**
@@ -145,7 +155,8 @@ class Lead extends FormRequest
             // Car
             CarInterface::VIN => '"VIN-код"',
             CarInterface::BRAND => '"Марка автомобиля"',
-            CarInterface::MODEL => '"Модель автомобиля"'
+            CarInterface::MODEL => '"Модель автомобиля"',
+            CarInterface::ISSUE_YEAR => '"Год выпуска автомобиля"',
         ];
     }
 
