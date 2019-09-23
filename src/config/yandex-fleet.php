@@ -34,8 +34,8 @@ return [
     ],
 
     'curl_options' => [
-        CURLOPT_PROXY => 'host.docker.internal:8888',
-        CURLOPT_SSL_VERIFYHOST => 0,
-        CURLOPT_SSL_VERIFYPEER => 0,
+        CURLOPT_PROXY => 'host.docker.internal222:8888',
+//        CURLOPT_SSL_VERIFYHOST => 0,
+//        CURLOPT_SSL_VERIFYPEER => 0,
     ]
 ];

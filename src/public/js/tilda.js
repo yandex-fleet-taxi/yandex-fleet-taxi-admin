@@ -264,44 +264,50 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
 
                         var responseErrorCodes = responseData.errors;
 
-                        var arLang = window.tildaForm.arValidateErrors[window.tildaBrowserLang] || {};
+                        if (responseErrorCodes) {
+                            var arLang = window.tildaForm.arValidateErrors[window.tildaBrowserLang] || {};
 
-                        if ('common' in responseErrorCodes) {
-                            var commonErrorCodes = responseErrorCodes.common;
-                            var commonErrorMessages = [];
+                            if ('common' in responseErrorCodes) {
+                                var commonErrorCodes = responseErrorCodes.common;
+                                var commonErrorMessages = [];
 
-                            for (var commonErrorCodeIndex in commonErrorCodes) {
-                                var commonErrorCode = commonErrorCodes[commonErrorCodeIndex];
-                                var commonErrorMessage = arLang[commonErrorCode] ? arLang[commonErrorCode] : commonErrorCodeIndex;
-                                commonErrorMessages.push(commonErrorMessage);
+                                for (var commonErrorCodeIndex in commonErrorCodes) {
+                                    var commonErrorCode = commonErrorCodes[commonErrorCodeIndex];
+                                    var commonErrorMessage = arLang[commonErrorCode] ? arLang[commonErrorCode] : commonErrorCode;
+                                    commonErrorMessages.push(commonErrorMessage);
+                                }
+
+                                var errorMessage = commonErrorMessages.join('<br/>');
+                                $allError.html(errorMessage)
                             }
 
-                            var errorMessage = commonErrorMessages.join('<br/>');
-                            $allError.html(errorMessage)
-                        }
+                            var errors = [];
 
-                        var errors = [];
+                            for (var key in responseErrorCodes) {
+                                if (!Object.prototype.hasOwnProperty.call(responseErrorCodes, key)) {
+                                    continue;
+                                }
 
-                        for (var key in responseErrorCodes) {
-                            if (!Object.prototype.hasOwnProperty.call(responseErrorCodes, key)) {
-                                continue;
+                                if (key == 'common') {
+                                    continue;
+                                }
+
+                                var keyErrors = responseErrorCodes[key];
+
+                                var vError = {};
+                                vError.obj = $jform.find('[name=' + key + ']');
+                                vError.type = keyErrors;
+
+                                errors.push(vError);
                             }
 
-                            if (key == 'common') {
-                                continue;
+                            if (errors.length > 0) {
+                                window.tildaFormNew.showErrors($jform, errors);
                             }
-
-                            var keyErrors = responseErrorCodes[key];
-
-                            var vError = {};
-                            vError.obj = $jform.find('[name=' + key + ']');
-                            vError.type = keyErrors;
-
-                            errors.push(vError);
-                        }
-
-                        if (errors.length > 0) {
-                            window.tildaFormNew.showErrors($jform, errors);
+                        } else if(responseData.message) {
+                            $allError.html(responseData.message)
+                        } else {
+                            $allError.html(error.responseText)
                         }
                     } else {
                         $allError.html(error.responseText + '. Please, try again later.')
