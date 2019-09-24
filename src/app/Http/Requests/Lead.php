@@ -78,7 +78,7 @@ class Lead extends FormRequest
             CarInterface::BRAND => $this->getCarBrandValidation(),
             CarInterface::COLOR => $this->getCarColorValidation(),
             CarInterface::MODEL => $required,
-            CarInterface::NUMBER => $required,
+            CarInterface::NUMBER => 'required|size:8|regex:/^[А-ЯЁ0-9]{8}$/u',
             CarInterface::REGISTRATION => $required,
             CarInterface::VIN => "required|size:17|regex:/^[A-Z0-9]{17}$/",
             CarInterface::ISSUE_YEAR => $this->getCarIssueYearValidation(),
