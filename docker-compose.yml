@@ -4,7 +4,7 @@ services:
   nginx:
     image: nginx:1.17-alpine
     volumes:
-      - ./src:/usr/share/nginx/html
+      - ./src:/home/h909220706/socol-taxi.ru/docs
       - ./docker/nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - ${HOST_NGINX_PORT}:${DEFAULT_NGINX_PORT}
@@ -16,7 +16,7 @@ services:
   php-fpm:
     build: ./docker/php-fpm
     volumes:
-      - ./src:/usr/share/nginx/html
+      - ./src:/home/h909220706/socol-taxi.ru/docs
     depends_on:
       - mariadb
     environment:

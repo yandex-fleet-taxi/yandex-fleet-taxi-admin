@@ -80,7 +80,7 @@ class Lead extends FormRequest
             CarInterface::MODEL => $required,
             CarInterface::NUMBER => $required,
             CarInterface::REGISTRATION => $required,
-            CarInterface::VIN => "required|size:17",
+            CarInterface::VIN => "required|size:17|regex:/^[A-Z0-9]{17}$/",
             CarInterface::ISSUE_YEAR => $this->getCarIssueYearValidation(),
         ];
     }
