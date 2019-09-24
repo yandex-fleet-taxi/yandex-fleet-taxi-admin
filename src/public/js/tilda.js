@@ -657,6 +657,7 @@ function generateReferenceSelects() {
 
                 firstOption.text('Выберите модель ...');
                 $modelsSelect.prop('disabled', false);
+                $modelsSelect.select2();
             });
         });
     }
@@ -675,6 +676,7 @@ function generateReferenceSelects() {
 
             $firstOption.text(firstEmptyTitle);
             $select.prop('disabled', false);
+            $select.select2();
         });
     }
 
@@ -690,6 +692,7 @@ function generateReferenceSelects() {
 
         $firstOption.text(firstEmptyTitle);
         $select.prop('disabled', false);
+        $select.select2();
     }
 
     function fillSelectByItems($select, items, selectedValue = null) {
