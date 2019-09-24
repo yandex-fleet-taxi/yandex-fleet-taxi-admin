@@ -1,0 +1,6 @@
+input[name=licence_number],
+input[name=car_number],
+input[name=car_vin],
+input[name=car_registration] {
+    text-transform: uppercase;
+}

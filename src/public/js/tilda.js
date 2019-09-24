@@ -20,6 +20,8 @@ var carIssueYearMin = 1984;
 var driverLicenseIssueCountrySelector = 'select[name=licence_issue_country]';
 var driverLicenseIssueCountryJsonUrl = baseHost + '/js/data/driver/license/countries.json';
 
+var carVinInputSelector = 'input[name=car_vin]';
+
 var errorCodeNumber = 0;
 
 // Tilda form overrides
@@ -460,6 +462,7 @@ addNewErrorMessages();
 // Generate selects and set own submit handler.
 jQuery(function () {
     generateReferenceSelects();
+    bindImputsMasks();
 
     var $form = jQuery(formSelector);
     var form = $form.get(0);
@@ -696,6 +699,34 @@ function generateReferenceSelects() {
             }
 
             $select.append(option);
+        });
+    }
+}
+
+function bindImputsMasks() {
+    bindCarVinMask();
+
+    function bindCarVinMask() {
+        var $carVinInput = $(carVinInputSelector);
+
+        $carVinInput.on('input', function(event){
+            var srcValue = this.value;
+            var pattern = /^[A-Z0-9]{17}$/;
+
+            if (pattern.test(srcValue)) {
+                return;
+            }
+
+            var resValue = srcValue.toUpperCase();
+            resValue = resValue.replace(/[^A-Z0-9]/g, '');
+            var valueLengthDiff = srcValue.length - resValue.length;
+
+            resValue = resValue.substr(0, 17);
+            var selectionStart = this.selectionStart;
+            var selectionEnd = this.selectionEnd;
+            this.value = resValue;
+
+            this.setSelectionRange(selectionStart - valueLengthDiff, selectionEnd - valueLengthDiff);
         });
     }
 }
