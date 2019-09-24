@@ -21,6 +21,7 @@ var driverLicenseIssueCountrySelector = 'select[name=licence_issue_country]';
 var driverLicenseIssueCountryJsonUrl = baseHost + '/js/data/driver/license/countries.json';
 
 var carVinInputSelector = 'input[name=car_vin]';
+var carNumberInputSelector = 'input[name=car_number]';
 
 var errorCodeNumber = 0;
 
@@ -462,7 +463,7 @@ addNewErrorMessages();
 // Generate selects and set own submit handler.
 jQuery(function () {
     generateReferenceSelects();
-    bindImputsMasks();
+    bindInputsMasks();
 
     var $form = jQuery(formSelector);
     var form = $form.get(0);
@@ -703,31 +704,45 @@ function generateReferenceSelects() {
     }
 }
 
-function bindImputsMasks() {
+function bindInputsMasks() {
     bindCarVinMask();
+    bindCarNumberMask();
 
     function bindCarVinMask() {
-        var $carVinInput = $(carVinInputSelector);
+        bindInputLimits(carVinInputSelector, 'A-Z0-9', 17);
+    }
 
-        $carVinInput.on('input', function(event){
+    function bindCarNumberMask() {
+        bindInputLimits(carNumberInputSelector, 'А-ЯЁ0-9', 8);
+    }
+
+    function bindInputLimits(inputSelector, pattern, length) {
+        var $input = $(inputSelector);
+
+        $input.on('input', function(event){
             var srcValue = this.value;
-            var pattern = /^[A-Z0-9]{17}$/;
+            var regexpStr = '^[' + pattern + ']{' + length + '}$';
+            var regexp = new RegExp(regexpStr);
 
-            if (pattern.test(srcValue)) {
+            if (regexp.test(srcValue)) {
                 return;
             }
 
             var resValue = srcValue.toUpperCase();
-            resValue = resValue.replace(/[^A-Z0-9]/g, '');
+
+            var replaceRegexpStr = '[^' + pattern + ']';
+            var replaceRegexp = new RegExp(replaceRegexpStr, 'g');
+            resValue = resValue.replace(replaceRegexp, '');
             var valueLengthDiff = srcValue.length - resValue.length;
 
-            resValue = resValue.substr(0, 17);
+            resValue = resValue.substr(0, length);
             var selectionStart = this.selectionStart;
             var selectionEnd = this.selectionEnd;
             this.value = resValue;
 
             this.setSelectionRange(selectionStart - valueLengthDiff, selectionEnd - valueLengthDiff);
         });
+
     }
 }
 
