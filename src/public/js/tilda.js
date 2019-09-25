@@ -457,6 +457,57 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
         }
     }
 };
+window.tildaFormNew.validate = function($jform) {
+    var errors =  window.tildaForm.validate($jform);
+    var error = null;
+    var $carVinField = $jform.find(carVinInputSelector);
+    if (error = validateCarVinField($carVinField)) {
+        errors.push(error);
+    }
+
+    var $carNumberField = $jform.find(carNumberInputSelector);
+    if (error = validateCarNumberField($carNumberField)) {
+        errors.push(error);
+    }
+
+    return errors;
+
+    function validateCarVinField($carVinField) {
+        return validateFieldByPatternAndLength($carVinField, 'A-Z0-9', 17, 'car_vin');
+    }
+
+    function validateCarNumberField($carNumberField) {
+        return validateFieldByPatternAndLength($carNumberField, 'А-ЯЁ0-9', 8, 'car_number');
+    }
+
+    function validateFieldByPatternAndLength($field, pattern, length, errorCode) {
+        var value = $field.val();
+
+        var valueLength = value.length;
+
+        if (valueLength < length) {
+            return createError($field, 'minlength')
+        } else if (valueLength > length) {
+            return createError($field, 'maxlength')
+        }
+
+        var regExpStr = '^[' + pattern + ']{' + length + '}$';
+        var regExp = new RegExp(regExpStr);
+
+        if (regExp.test(value)) {
+            return null;
+        }
+
+        return createError($field, errorCode);
+
+        function createError($obj, errorType) {
+            return {
+                obj: $obj,
+                type: [errorType]
+            };
+        }
+    }
+};
 
 addNewErrorMessages();
 
@@ -491,7 +542,7 @@ jQuery(function () {
         btnformsubmit.data('form-sending-status', '1');
         btnformsubmit.data('submitform', $activeForm);
         window.tildaForm.hideErrors($activeForm);
-        arErrors = window.tildaForm.validate($activeForm);
+        arErrors = window.tildaFormNew.validate($activeForm);
 
         if (window.tildaForm.showErrors($activeForm, arErrors)) {
             btnformsubmit.removeClass('t-btn_sending');
@@ -565,6 +616,8 @@ function addNewErrorMessages() {
         'duplicate_phone': 'Водитель с указанным номером рабочего телефона уже зарегистрирован.',
         'unknown': 'Во время обработки запроса произошла неизветная ошибка. Попробуте повторить отправку формы немного позже.',
         'http_response_error': 'Во время обработки данных сервером Яндекса произошла ошибка. Попробуте повторить отправку формы немного позже.',
+        'car_vin': 'Неверный VIN',
+        'car_number': 'Неверный госномер. Если номер вашей машины состоит не из 8 символов, для регистрации обратитесь к оператору.'
     };
 
     Object.assign(window.tildaForm.arValidateErrors.RU, ruMessages);
@@ -576,6 +629,8 @@ function addNewErrorMessages() {
         'duplicate_phone': 'Driver with that working phone number already exists.',
         'unknown': 'There is an error occurred while processing form data. Please try again later.',
         'http_response_error': 'There is an error occurred on Yandex server, while processing form data. Please try again later.',
+        'car_vin': 'Invalid VIN.',
+        'car_number': 'Invalid car number.'
     };
 
     Object.assign(window.tildaForm.arValidateErrors.EN, enMessages);
