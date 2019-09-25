@@ -779,6 +779,7 @@ function bindInputsMasks() {
 
         $input.on('input', function(event){
             var srcValue = this.value;
+            // var srcValueWithoutUnderline = srcValue.replace(/_/g, '');
             var regexpStr = '^[' + pattern + ']{' + length + '}$';
             var regexp = new RegExp(regexpStr);
 
@@ -788,7 +789,7 @@ function bindInputsMasks() {
 
             var resValue = srcValue.toUpperCase();
 
-            var replaceRegexpStr = '[^' + pattern + ']';
+            var replaceRegexpStr = '[^' + pattern + '_' + ']';
             var replaceRegexp = new RegExp(replaceRegexpStr, 'g');
             resValue = resValue.replace(replaceRegexp, '');
             var valueLengthDiff = srcValue.length - resValue.length;
@@ -796,6 +797,7 @@ function bindInputsMasks() {
             resValue = resValue.substr(0, length);
             var selectionStart = this.selectionStart;
             var selectionEnd = this.selectionEnd;
+            resValue = resValue.padEnd(length, '_');
             this.value = resValue;
 
             this.setSelectionRange(selectionStart - valueLengthDiff, selectionEnd - valueLengthDiff);
