@@ -473,25 +473,29 @@ window.tildaFormNew.validate = function($jform) {
     return errors;
 
     function validateCarVinField($carVinField) {
-        return validateFieldByPatternAndLength($carVinField, 'A-Z0-9', 17, 'car_vin');
+        return validateFieldByPatternAndLength($carVinField, 'A-Z0-9', 'car_vin', 17);
     }
 
     function validateCarNumberField($carNumberField) {
-        return validateFieldByPatternAndLength($carNumberField, 'А-ЯЁ0-9', 8, 'car_number');
+        return validateFieldByPatternAndLength($carNumberField, 'А-ЯЁ0-9',  'car_number', 8);
     }
 
-    function validateFieldByPatternAndLength($field, pattern, length, errorCode) {
+    function validateFieldByPatternAndLength($field, pattern, errorCode, minLength, maxLength = null) {
         var value = $field.val();
 
         var valueLength = value.length;
 
-        if (valueLength < length) {
+        if (!maxLength) {
+            maxLength = minLength;
+        }
+
+        if (valueLength < minLength) {
             return createError($field, 'minlength')
-        } else if (valueLength > length) {
+        } else if (valueLength > minLength) {
             return createError($field, 'maxlength')
         }
 
-        var regExpStr = '^[' + pattern + ']{' + length + '}$';
+        var regExpStr = '^[' + pattern + ']{' + minLength + ',' + maxLength +'}$';
         var regExp = new RegExp(regExpStr);
 
         if (regExp.test(value)) {
@@ -617,7 +621,7 @@ function addNewErrorMessages() {
         'unknown': 'Во время обработки запроса произошла неизветная ошибка. Попробуте повторить отправку формы немного позже.',
         'http_response_error': 'Во время обработки данных сервером Яндекса произошла ошибка. Попробуте повторить отправку формы немного позже.',
         'car_vin': 'Неверный VIN',
-        'car_number': 'Неверный госномер. Если номер вашей машины состоит не из 8 символов, для регистрации обратитесь к оператору.'
+        'car_number': 'Неверный госномер. Если номер вашей машины состоит не из 8-9 символов, для регистрации обратитесь к оператору.'
     };
 
     Object.assign(window.tildaForm.arValidateErrors.RU, ruMessages);
@@ -771,16 +775,19 @@ function bindInputsMasks() {
     }
 
     function bindCarNumberMask() {
-        bindInputLimits(carNumberInputSelector, 'А-ЯЁ0-9', 8);
+        bindInputLimits(carNumberInputSelector, 'А-ЯЁ0-9', 8, 9);
     }
 
-    function bindInputLimits(inputSelector, pattern, length) {
+    function bindInputLimits(inputSelector, pattern, minLength, maxLength = null) {
         var $input = $(inputSelector);
+        if (!maxLength) {
+            maxLength = minLength;
+        }
 
         $input.on('input', function(event){
             var srcValue = this.value;
             // var srcValueWithoutUnderline = srcValue.replace(/_/g, '');
-            var regexpStr = '^[' + pattern + ']{' + length + '}$';
+            var regexpStr = '^[' + pattern + ']{' + minLength + ',' + maxLength +'}$';
             var regexp = new RegExp(regexpStr);
 
             if (regexp.test(srcValue)) {
@@ -788,22 +795,46 @@ function bindInputsMasks() {
             }
 
             var resValue = srcValue.toUpperCase();
-
-            var replaceRegexpStr = '[^' + pattern + '_' + ']';
+            var maskChar = '_';
+            var replaceRegexpStr = '[^' + pattern + maskChar + ']';
             var replaceRegexp = new RegExp(replaceRegexpStr, 'g');
             resValue = resValue.replace(replaceRegexp, '');
             var valueLengthDiff = srcValue.length - resValue.length;
 
-            resValue = resValue.substr(0, length);
+            resValue = resValue.substr(0, maxLength);
+
+            var resValueLength = resValue.length;
+
+            if (resValueLength < minLength) {
+                resValue = resValue.padEnd(minLength, maskChar);
+            } else if ((resValueLength > minLength) && (maxLength !== minLength)) {
+                resValue = trimRightMask(resValue, minLength, maskChar);
+            }
+
             var selectionStart = this.selectionStart;
             var selectionEnd = this.selectionEnd;
-            resValue = resValue.padEnd(length, '_');
             this.value = resValue;
 
             this.setSelectionRange(selectionStart - valueLengthDiff, selectionEnd - valueLengthDiff);
         });
 
+        function trimRightMask(str, minLength, maskChar) {
+            var minLengthValue = str.substr(0, minLength);
+            var remainsValue = str.substr(minLength);
+
+            remainsValue = trimRight(remainsValue, maskChar);
+
+            return minLengthValue + remainsValue;
+        }
     }
+}
+
+function trimRight(str, charlist)
+{
+    if (charlist === undefined)
+        charlist = "\s";
+
+    return str.replace(new RegExp("[" + charlist + "]+$"), "");
 }
 
 /**
