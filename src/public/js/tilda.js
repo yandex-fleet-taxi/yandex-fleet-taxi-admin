@@ -21,7 +21,11 @@ var driverLicenseIssueCountrySelector = 'select[name=licence_issue_country]';
 var driverLicenseIssueCountryJsonUrl = baseHost + '/js/data/driver/license/countries.json';
 
 var carVinInputSelector = 'input[name=car_vin]';
+var carVinMinLength = carVinMaxLength = 17;
+
 var carNumberInputSelector = 'input[name=car_number]';
+var carNumberMinLength = 8;
+var carNumberMaxLength = 9;
 
 var errorCodeNumber = 0;
 
@@ -307,7 +311,7 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
                             if (errors.length > 0) {
                                 window.tildaFormNew.showErrors($jform, errors);
                             }
-                        } else if(responseData.message) {
+                        } else if (responseData.message) {
                             $allError.html(responseData.message)
                         } else {
                             $allError.html(error.responseText)
@@ -457,8 +461,8 @@ window.tildaFormNew.send = function ($jform, btnformsubmit, formtype, formskey) 
         }
     }
 };
-window.tildaFormNew.validate = function($jform) {
-    var errors =  window.tildaForm.validate($jform);
+window.tildaFormNew.validate = function ($jform) {
+    var errors = window.tildaForm.validate($jform);
     var error = null;
     var $carVinField = $jform.find(carVinInputSelector);
     if (error = validateCarVinField($carVinField)) {
@@ -473,14 +477,14 @@ window.tildaFormNew.validate = function($jform) {
     return errors;
 
     function validateCarVinField($carVinField) {
-        return validateFieldByPatternAndLength($carVinField, 'A-Z0-9', 'car_vin', 17);
+        return validateFieldByPatternAndLength($carVinField, 'A-Z0-9', 'car_vin', carVinMinLength, carVinMaxLength);
     }
 
     function validateCarNumberField($carNumberField) {
-        return validateFieldByPatternAndLength($carNumberField, 'А-ЯЁ0-9',  'car_number', 8);
+        return validateFieldByPatternAndLength($carNumberField, 'А-ЯЁ0-9', 'car_number', carNumberMinLength, carNumberMaxLength);
     }
 
-    function validateFieldByPatternAndLength($field, pattern, errorCode, minLength, maxLength = null) {
+    function validateFieldByPatternAndLength($field, pattern, errorCode, minLength, maxLength) {
         var value = $field.val();
 
         var valueLength = value.length;
@@ -495,7 +499,7 @@ window.tildaFormNew.validate = function($jform) {
             return createError($field, 'maxlength')
         }
 
-        var regExpStr = '^[' + pattern + ']{' + minLength + ',' + maxLength +'}$';
+        var regExpStr = '^[' + pattern + ']{' + minLength + ',' + maxLength + '}$';
         var regExp = new RegExp(regExpStr);
 
         if (regExp.test(value)) {
@@ -517,16 +521,18 @@ addNewErrorMessages();
 
 // Generate selects and set own submit handler.
 jQuery(function () {
+    initSelect2();
     generateReferenceSelects();
     bindInputsMasks();
 
-    var $form = jQuery(formSelector);
-    var form = $form.get(0);
-    var $r = $form.closest('.r');
-    var r = $r.get(0);
+    // var $form = jQuery(formSelector);
+    // var form = $form.get(0);
+    // var $r = $form.closest('.r');
+    // var r = $r.get(0);
 
-    $('.r').off('click', '.js-form-proccess [type=submit]');
-    $('.r').on('click', '.js-form-proccess [type=submit]', function (event) {
+    $r = $('.r');
+    $r.off('click', '.js-form-proccess [type=submit]');
+    $r.on('click', '.js-form-proccess [type=submit]', function (event) {
         event.preventDefault();
         var btnformsubmit = $(this);
         var btnstatus = btnformsubmit.data('form-sending-status');
@@ -624,7 +630,8 @@ function addNewErrorMessages() {
         'car_number': 'Неверный госномер. Если номер вашей машины состоит не из 8-9 символов, для регистрации обратитесь к оператору.'
     };
 
-    Object.assign(window.tildaForm.arValidateErrors.RU, ruMessages);
+    $.extend(window.tildaForm.arValidateErrors.RU, ruMessages);
+    // Object.assign(window.tildaForm.arValidateErrors.RU, ruMessages);
 
     // EN
     var enMessages = {
@@ -637,7 +644,8 @@ function addNewErrorMessages() {
         'car_number': 'Invalid car number.'
     };
 
-    Object.assign(window.tildaForm.arValidateErrors.EN, enMessages);
+    $.extend(window.tildaForm.arValidateErrors.EN, enMessages);
+    // Object.assign(window.tildaForm.arValidateErrors.EN, enMessages);
 }
 
 function generateReferenceSelects() {
@@ -652,7 +660,7 @@ function generateReferenceSelects() {
     // Domain functions
     function generateCarIssueYearSelect() {
         var years = generateCarIssueYear();
-        generateSelectByItems(carIssueYearSelectSelector, years, 'Выберите год ...');
+        generateSelectByItems(carIssueYearSelectSelector, years, 'Выберите год ...', null);
 
         function generateCarIssueYear() {
             var years = [];
@@ -677,11 +685,11 @@ function generateReferenceSelects() {
     }
 
     function generateCarBrandsSelect() {
-        generateSelectByJsonUrl(carBrandSelectSelector, carBrandsJsonUrl, 'Выберите марку ...');
+        generateSelectByJsonUrl(carBrandSelectSelector, carBrandsJsonUrl, 'Выберите марку ...', null);
     }
 
     function generateCarColorsSelect() {
-        generateSelectByJsonUrl(carColorSelectSelector, carColorJsonUrl, 'Выберите цвет ...');
+        generateSelectByJsonUrl(carColorSelectSelector, carColorJsonUrl, 'Выберите цвет ...', null);
     }
 
     function generateCarModelsSelect() {
@@ -722,7 +730,7 @@ function generateReferenceSelects() {
     }
 
     // Select generation functions
-    function generateSelectByJsonUrl(selectSelector, jsonUrl, firstEmptyTitle, selectedValue = null) {
+    function generateSelectByJsonUrl(selectSelector, jsonUrl, firstEmptyTitle, selectedValue) {
         var $select = $(selectSelector);
 
         $select.prop('disabled', true);
@@ -739,7 +747,7 @@ function generateReferenceSelects() {
         });
     }
 
-    function generateSelectByItems(selectSelector, items, firstEmptyTitle, selectedValue = null) {
+    function generateSelectByItems(selectSelector, items, firstEmptyTitle, selectedValue) {
         var $select = $(selectSelector);
 
         $select.prop('disabled', true);
@@ -754,7 +762,7 @@ function generateReferenceSelects() {
         $select.select2();
     }
 
-    function fillSelectByItems($select, items, selectedValue = null) {
+    function fillSelectByItems($select, items, selectedValue) {
         $.each(items, function (key, item) {
             var option = $('<option>').attr('value', item).text(item);
             if (selectedValue === item) {
@@ -771,23 +779,23 @@ function bindInputsMasks() {
     bindCarNumberMask();
 
     function bindCarVinMask() {
-        bindInputLimits(carVinInputSelector, 'A-Z0-9', 17);
+        bindInputLimits(carVinInputSelector, 'A-Z0-9', carVinMinLength, carVinMaxLength);
     }
 
     function bindCarNumberMask() {
-        bindInputLimits(carNumberInputSelector, 'А-ЯЁ0-9', 8, 9);
+        bindInputLimits(carNumberInputSelector, 'А-ЯЁ0-9', carNumberMinLength, carNumberMaxLength);
     }
 
-    function bindInputLimits(inputSelector, pattern, minLength, maxLength = null) {
+    function bindInputLimits(inputSelector, pattern, minLength, maxLength) {
         var $input = $(inputSelector);
         if (!maxLength) {
             maxLength = minLength;
         }
 
-        $input.on('input', function(event){
+        $input.on('input', function (event) {
             var srcValue = this.value;
             // var srcValueWithoutUnderline = srcValue.replace(/_/g, '');
-            var regexpStr = '^[' + pattern + ']{' + minLength + ',' + maxLength +'}$';
+            var regexpStr = '^[' + pattern + ']{' + minLength + ',' + maxLength + '}$';
             var regexp = new RegExp(regexpStr);
 
             if (regexp.test(srcValue)) {
@@ -829,8 +837,7 @@ function bindInputsMasks() {
     }
 }
 
-function trimRight(str, charlist)
-{
+function trimRight(str, charlist) {
     if (charlist === undefined)
         charlist = "\s";
 
@@ -847,5 +854,29 @@ function isJSON(str) {
         return true;
     } catch (e) {
         return false;
+    }
+}
+
+function initSelect2() {
+    $.fn.select2.defaults.set("matcher", matchStart);
+
+    function matchStart(params, data) {
+        // If there are no search terms, return all of the data
+        if ($.trim(params.term) === '') {
+            return data;
+        }
+
+        // Do not display the item if there is no 'text' property
+        if (typeof data.text === 'undefined') {
+            return null;
+        }
+
+        params.term = params.term || '';
+
+        if (data.text.toUpperCase().indexOf(params.term.toUpperCase()) !== 0) {
+            return false;
+        }
+
+        return data;
     }
 }
