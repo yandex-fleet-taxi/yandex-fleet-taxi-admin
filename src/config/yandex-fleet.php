@@ -24,18 +24,30 @@ return [
         ],
 
         'car' => [
-            'booster_count' => 0,
-            'callsign' => 'тест',
-            'cargo_loaders' => 0,
-            'park_id' => env('YANDEX_FLEET_PARK_ID'),
             'status' => 'working',//todo
+            'callsign' => 'тест',
+            'booster_count' => 0,
+            'categories' => [],
+            'carrier_permit_owner_id' => null,
             'transmission' => 'unknown',
+            'rental' => null,
+            'chairs' => [],
+            'tariffs' => [],
+            'body_number' => null,
+            'service_check_expiration_date' => null,
+            'car_insurance_expiration_date' => null,
+            'car_authorization_expiration_date' => null,
+            'insurance_for_goods_and_passengers_expiration_date' => null,
+            'badge_for_alternative_transport_expiration_date' => null,
+            'amenities' => [],
+            'permit_num' => null,
         ]
     ],
 
     'curl_options' => [
-        CURLOPT_PROXY => 'host.docker.internal222:8888',
-//        CURLOPT_SSL_VERIFYHOST => 0,
-//        CURLOPT_SSL_VERIFYPEER => 0,
+//        CURLOPT_PROXY => 'host.docker.internal:8888',
+        CURLOPT_PROXY => null,
+        CURLOPT_SSL_VERIFYHOST => 0,
+        CURLOPT_SSL_VERIFYPEER => 0,
     ]
 ];

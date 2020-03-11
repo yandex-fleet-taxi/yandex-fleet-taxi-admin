@@ -95,7 +95,7 @@ class ApiController extends Controller
             $driverId = $this->createDriverByFrontendData($parkId, $data, $defaultDriverPostData);
 
             $defaultCarPostData = $this->defaultCarPostData;
-            $carId = $this->createCarByFrontendData($data, $defaultCarPostData);
+            $carId = $this->createCarByFrontendData($parkId, $data, $defaultCarPostData);
             $this->bindCarToDriver($parkId, $driverId, $carId);
 
             $status = 'success';
@@ -146,13 +146,13 @@ class ApiController extends Controller
         return $this->yandexClient->createDriver($parkId, $postData);
     }
 
-    private function createCarByFrontendData(array $frontendData, array $defaultCarPostData)
+    private function createCarByFrontendData(string $parkId, array $frontendData, array $defaultCarPostData)
     {
         $yandexClientPostData = $this->convertFrontendDataToYandexClientCreateCarPostData($frontendData, $defaultCarPostData);
 
-        $createCarResponseData = $this->createCar($yandexClientPostData);
+        $createCarResponseData = $this->createCar($parkId, $yandexClientPostData);
 
-        return $createCarResponseData['data']['id'];
+        return $createCarResponseData['id'];
     }
 
     private function convertFrontendDataToYandexClientCreateCarPostData(array $frontendData, array $defaultCarPostData)
@@ -160,9 +160,9 @@ class ApiController extends Controller
         return $this->toCreateCarPostDataConverter->convert($frontendData, $defaultCarPostData);
     }
 
-    private function createCar($postData)
+    private function createCar(string $parkId, array $postData)
     {
-        return $this->yandexClient->storeVehicles($postData);
+        return $this->yandexClient->createCar($parkId, $postData);
     }
 
     private function bindCarToDriver(string $parkId, string $driverId, string $carId)
